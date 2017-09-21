@@ -1,0 +1,15 @@
+.cell2-row2 {
+    border-left: none !important;
+    border-top: none !important;
+}
+
+.border-left-none {
+    border-left: none !important;
+}
+.borderLeft {
+    border-left: 1px solid rgba(34, 36, 38, 0.1) !important;
+}
+
+.cursorPointer {
+    cursor: pointer;
+}
