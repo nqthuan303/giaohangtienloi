@@ -20,7 +20,7 @@ export default class LoginComponent extends Component {
     errors: PropTypes.object
   }
 
-  handleSubmit (e) {
+  handleSubmit = (e) => {
     e.preventDefault()
     const {login} = this.props
     const {username, password} = this.state
