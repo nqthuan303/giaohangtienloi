@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Field, reduxForm } from 'redux-form'
-import { Grid, Button, Select, Table, Form, Dropdown, Input } from 'semantic-ui-react'
+import { reduxForm } from 'redux-form'
+import { Grid, Button, Select, Form, Dropdown, Input } from 'semantic-ui-react'
 import { get, post } from '../../../api/utils'
 import PlacesAutocomplete, { geocodeByAddress } from 'react-places-autocomplete'
 import { toast } from 'react-toastify'
@@ -226,7 +226,7 @@ class OrderForm extends React.Component {
 
   render () {
     const {
-      value, objData,
+      objData,
       addPhoneNumber, clientOption,
       loading, districts, getGoodsBack } = this.state
 

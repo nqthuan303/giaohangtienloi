@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Icon, Table, Menu, Select, Button, Input} from 'semantic-ui-react'
+import {Icon, Table, Select, Button, Input} from 'semantic-ui-react'
 import { get, post } from '../../../api/utils'
 import { toast } from 'react-toastify'
 

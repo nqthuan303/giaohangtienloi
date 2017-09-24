@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {Icon, Modal, Button, Table} from 'semantic-ui-react'
+import { Modal, Button} from 'semantic-ui-react'
 import ClientOrderInModal from './ClientOrderInModal'
-import { get, post } from '../../../api/utils'
 
 export default class PickupDetailModal extends React.Component {
   constructor (props) {

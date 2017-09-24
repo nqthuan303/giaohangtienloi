@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Icon, Table, Menu, Input, Button} from 'semantic-ui-react'
+import {Icon, Table, Input, Button} from 'semantic-ui-react'
 import { get, post } from '../../../api/utils'
 
 export default class ClientOrderInModal extends Component {

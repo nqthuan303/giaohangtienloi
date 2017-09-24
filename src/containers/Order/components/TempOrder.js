@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {Icon, Table, Menu} from 'semantic-ui-react'
-import OrderModal from './OrderModal'
-import { get } from '../../../api/utils'
 
 class TempOrder extends Component {
   static propTypes = {

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import { Button, Checkbox, Icon, Table } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react'
 import { Goto } from '../../../components'
 import { get } from '../../../api/utils'
 
