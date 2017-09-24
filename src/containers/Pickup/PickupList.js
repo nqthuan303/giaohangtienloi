@@ -31,6 +31,7 @@ class PickupList extends Component {
 
   getDistrictList () {
     get('/order/count-order-in-district').then((result) => {
+      console.log(result)
       this.setState({
         districts: result.data.data
       })
