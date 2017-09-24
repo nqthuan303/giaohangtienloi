@@ -1,8 +1,6 @@
-// Request utils,
-// feel free to replace with your code
-// (get, post are used in ApiServices)
 
 import {getLocalToken, resetLocalToken} from '../../api'
+import {API_URL} from '../../constants/appConstants';
 
 export default function requestWrapper (method) {
   return function (url, data = null, params = {}) {
@@ -32,7 +30,7 @@ export default function requestWrapper (method) {
       if (token) {
         defaults.headers['Authorization'] = token
       }
-      url = 'https://ghtl-api.herokuapp.com/api' + url
+      url = API_URL + url
     }
 
     if (data) {
