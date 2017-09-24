@@ -30,7 +30,7 @@ class PickupList extends Component {
   }
 
   getDistrictList () {
-    get('/order/count-order-in-district').then((result) => {
+    get('/order/count-order-in-district?status=pending').then((result) => {
       console.log(result)
       this.setState({
         districts: result.data.data
