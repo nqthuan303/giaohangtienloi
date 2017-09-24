@@ -38,13 +38,13 @@ const configureRootComponent = store => {
   return <Root {...propsRoot} />
 }
 
+console.log(process.env.NODE_ENV)
+
 if (process.env.NODE_ENV === 'production') {
   require('./pwa')
 } else if (process.env.NODE_ENV === 'development') {
-  // Devtools
-  // whyDidYouUpdate package is temporary broken, waiting for a patch
-  // const {whyDidYouUpdate} = require('why-did-you-update')
-  // whyDidYouUpdate(React)
+  const {whyDidYouUpdate} = require('why-did-you-update')
+  whyDidYouUpdate(React)
   window.Perf = require('react-addons-perf')
 }
 

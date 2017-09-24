@@ -5,7 +5,7 @@
   "dependencies": {
     "js-cookie": "^2.1.4",
     "normalizr": "^3.2.3",
-    "offline-plugin": "^4.8.3",
+    "offline-plugin": "^4.8.4",
     "react": "^15.6.1",
     "react-addons-perf": "^15.4.2",
     "react-dom": "^15.6.1",
@@ -14,7 +14,7 @@
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.6",
-    "react-scripts": "1.0.13",
+    "react-scripts": "^1.0.13",
     "react-toastify": "^2.0.0",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
@@ -23,7 +23,8 @@
     "semantic-ui-css": "^2.2.12",
     "semantic-ui-react": "^0.73.1",
     "store2": "^2.5.5",
-    "styled-components": "^2.1.2"
+    "styled-components": "^2.1.2",
+    "why-did-you-update": "0.0.8"
   },
   "scripts": {
     "start": "react-scripts start",
