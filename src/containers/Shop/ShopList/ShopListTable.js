@@ -16,10 +16,12 @@ class ShopListTable extends Component {
     renderRows() {
         const {data} = this.props;
         return data.map((item, i) => {
+            const shopInfoUrl = '/shop/info/' + item._id;
+
             return (
                 <Table.Row key={i}>
                     <Table.Cell>1</Table.Cell>
-                    <Table.Cell><Goto text={item.name} url="/shop/info"/></Table.Cell>
+                    <Table.Cell><Goto text={item.name} url={shopInfoUrl}/></Table.Cell>
                     <Table.Cell>{item.phone}</Table.Cell>
                     <Table.Cell>{item.address}</Table.Cell>
                     <Table.Cell></Table.Cell>

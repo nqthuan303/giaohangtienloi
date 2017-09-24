@@ -32,7 +32,6 @@ class ClientList extends Component {
     render() {
 
         const {selectedMenu, shopList} = this.state;
-        console.log(shopList);
 
         return (
             <div>

@@ -39,7 +39,7 @@ export const appRouting = [
     component: ShopList
   },
   {
-    path: '/shop/info',
+    path: '/shop/info/:shopId',
     name: 'Thông tin Shop',
     exact: true,
     sidebarVisible: false,
