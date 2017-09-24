@@ -15,37 +15,44 @@ import './styles/global'
 import {render} from 'react-dom'
 
 const configureStore = initialState => {
-  let thunkApplied = applyMiddleware(thunk)
-  let routerMiddlewareApplied = applyMiddleware(routerMiddleware(history))
-  let enhancers
+    let thunkApplied = applyMiddleware(thunk)
+    let routerMiddlewareApplied = applyMiddleware(routerMiddleware(history))
+    let enhancers
 
-  if (process.env.NODE_ENV === 'development') {
-    // FIXME: remove duplication
-    const {composeWithDevTools} = require('redux-devtools-extension')
-    enhancers = composeWithDevTools(thunkApplied, routerMiddlewareApplied)
-  } else {
-    enhancers = compose(thunkApplied, routerMiddlewareApplied)
-  }
+    if (process.env.NODE_ENV === 'development') {
+        // FIXME: remove duplication
+        const {composeWithDevTools} = require('redux-devtools-extension')
+        enhancers = composeWithDevTools(thunkApplied, routerMiddlewareApplied)
+    } else {
+        enhancers = compose(thunkApplied, routerMiddlewareApplied)
+    }
 
-  return createStore(rootReducer, initialState, enhancers)
+    return createStore(rootReducer, initialState, enhancers)
 }
 const configureRootComponent = store => {
-  const propsRoot = {
-    routes: Routing,
-    history,
-    store
-  }
-  return <Root {...propsRoot} />
+    const propsRoot = {
+        routes: Routing,
+        history,
+        store
+    }
+    return <Root {...propsRoot} />
 }
 
 console.log(process.env.NODE_ENV)
 
 if (process.env.NODE_ENV === 'production') {
-  require('./pwa')
+    require('./pwa')
 } else if (process.env.NODE_ENV === 'development') {
-  const {whyDidYouUpdate} = require('why-did-you-update')
-  whyDidYouUpdate(React)
-  window.Perf = require('react-addons-perf')
+    let createClass = React.createClass;
+    Object.defineProperty(React, 'createClass', {
+        set: (nextCreateClass) => {
+            createClass = nextCreateClass;
+        }
+    });
+
+    const {whyDidYouUpdate} = require('why-did-you-update')
+    whyDidYouUpdate(React)
+    window.Perf = require('react-addons-perf')
 }
 
 const preloadedState = window.__PRELOADED_STATE__ || {}
@@ -56,7 +63,7 @@ const RootComponent = configureRootComponent(store)
 render(RootComponent, document.getElementById('root'))
 
 if (module.hot) {
-  module.hot.accept()
+    module.hot.accept()
 }
 
 
