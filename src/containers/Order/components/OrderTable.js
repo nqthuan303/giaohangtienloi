@@ -28,26 +28,6 @@ export default class OrderTableComponent extends Component {
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if (JSON.stringify(this.state.orders) !== JSON.stringify(nextState.orders)) {
-            return true;
-        }
-
-        if (this.state.orderModal !== nextState.orderModal) {
-            return true;
-        }
-
-        if (this.state.confirmModal !== nextState.confirmModal) {
-            return true;
-        }
-
-        if (this.state.clickedId !== nextState.clickedId) {
-            return true;
-        }
-
-        return false;
-    }
-
     componentDidMount() {
         this.getOrderList()
     }

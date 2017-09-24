@@ -22,7 +22,6 @@ class AddDelivery extends Component {
 
   getDistrictList () {
     get('/order/count-order-in-district?orderStatus=storage').then((result) => {
-      console.log(result)
       this.setState({
         districts: result.data.data,
       });

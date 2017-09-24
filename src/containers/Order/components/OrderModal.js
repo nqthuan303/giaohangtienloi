@@ -13,13 +13,6 @@ export default class OrderModal extends React.Component {
         onModalClose: PropTypes.func
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if (this.props.show !== nextProps.show) {
-            return true;
-        }
-        return false;
-    }
-
     render() {
         const {onModalClose, show} = this.props;
 

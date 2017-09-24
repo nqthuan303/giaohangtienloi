@@ -30,30 +30,6 @@ class ConfirmModal extends Component {
         }
     }
 
-    shouldComponentUpdate(nextProps) {
-        if (this.props.show !== nextProps.show) {
-            return true;
-        }
-
-        if (this.props.title !== nextProps.title) {
-            return true;
-        }
-
-        if (this.props.loading !== nextProps.loading) {
-            return true;
-        }
-
-        if (this.props.confirmLabel !== nextProps.confirmLabel) {
-            return true;
-        }
-
-        if (this.props.cancelLabel !== nextProps.cancelLabel) {
-            return true;
-        }
-
-        return false;
-    }
-
 
     showModal = () => {
         const {show} = this.state
