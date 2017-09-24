@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Icon, Table, Menu, Input} from 'semantic-ui-react'
+import {Icon, Table} from 'semantic-ui-react'
 import { get, post } from '../../../api/utils'
 import {ConfirmModal} from '../../../components'
 import { toast } from 'react-toastify'
@@ -65,7 +65,6 @@ export default class PickupTable extends Component {
     post('/pickup/delete/' + pickUpId, orderIds).then((result) => {
       const data = result.data
       const status = data.status
-      const message = data.message
 
       if (status === 'success') {
         onDeletePickupSuccess()

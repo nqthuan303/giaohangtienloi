@@ -1,72 +1,80 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import { Button, Checkbox, Icon, Table } from 'semantic-ui-react'
-import { Goto } from '../../../components'
-import { get } from '../../../api/utils'
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import { Menu, Segment, Button} from 'semantic-ui-react'
+import {get} from '../../../api/utils'
+import {default as ShopListTable} from './ShopListTable';
 
 class ClientList extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      shopList: []
+    constructor(props) {
+        super(props)
+        this.state = {
+            shopList: [],
+            selectedMenu: 'menu0'
+        }
     }
-  }
 
-  componentDidMount () {
-    this.getShopList()
-  }
-
-  async getShopList () {
-    const result = await get('/client/list')
-    if (result.ok) {
-      const data = result.data
-      console.log(data.data)
+    componentDidMount() {
+        this.getShopList()
     }
-  }
 
-  render () {
-    return (
-      <Table celled compact definition>
-        <Table.Header fullWidth>
-          <Table.Row>
-            <Table.HeaderCell>STT</Table.HeaderCell>
-            <Table.HeaderCell>Tên shop</Table.HeaderCell>
-            <Table.HeaderCell>SĐT</Table.HeaderCell>
-            <Table.HeaderCell>Địa chỉ</Table.HeaderCell>
-            <Table.HeaderCell>Đối soát</Table.HeaderCell>
-            <Table.HeaderCell>Thanh toán gần nhất</Table.HeaderCell>
-            <Table.HeaderCell>Trạng thái</Table.HeaderCell>
-            <Table.HeaderCell>Ngày đăng ký</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
+    async getShopList() {
+        const result = await get('/client/list')
+        if (result.ok) {
+            const data = result.data
+            this.setState({shopList: data.data.items});
+        }
+    }
 
-        <Table.Body>
-          <Table.Row>
-            <Table.Cell>1</Table.Cell>
-            <Table.Cell><Goto text="Shop 01" url="/shop/info"/></Table.Cell>
-            <Table.Cell>jhlilk22@yahoo.com</Table.Cell>
-            <Table.Cell>jhlilk22@yahoo.com</Table.Cell>
-            <Table.Cell>jhlilk22@yahoo.com</Table.Cell>
-            <Table.Cell>jhlilk22@yahoo.com</Table.Cell>
-            <Table.Cell>jhlilk22@yahoo.com</Table.Cell>
-            <Table.Cell>jhlilk22@yahoo.com</Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table>
-    )
-  }
+    onChangeMenu = (e, { name }) => {
+        this.setState({selectedMenu: name});
+    }
+
+    render() {
+
+        const {selectedMenu, shopList} = this.state;
+        console.log(shopList);
+
+        return (
+            <div>
+                <Menu attached='top' tabular>
+                    <Menu.Item
+                        active={selectedMenu === 'menu0'}
+                        key={0} name='menu0'
+                        onClick={this.onChangeMenu}>Danh sách</Menu.Item>
+
+                    <Menu.Item
+                        active={selectedMenu === 'menu1'}
+                        key={1} name='menu1'
+                        onClick={this.onChangeMenu}>Cần thanh toán</Menu.Item>
+
+                    <Menu.Item
+                        active={selectedMenu === 'menu2'}
+                        key={2} name='menu2'
+                        onClick={this.onChangeMenu}>Bảng kê</Menu.Item>
+
+                    <Menu.Menu position='right'>
+                        <Menu.Item>
+                            <Button content='Lịch sử lấy hàng' icon='right arrow' labelPosition='right'/>
+                        </Menu.Item>
+                    </Menu.Menu>
+                </Menu>
+                <Segment attached='bottom'>
+                    <ShopListTable data={shopList} />
+                </Segment>
+            </div>
+        )
+    }
 }
 
-function mapStateToProps (state) {
-  const {errors} = state.me.auth
-  return {
-    errors
-  }
+function mapStateToProps(state) {
+    const {errors} = state.me.auth
+    return {
+        errors
+    }
 }
 
-function mapDispatchToProps (dispatch) {
-  return {}
+function mapDispatchToProps(dispatch) {
+    return {}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ClientList)

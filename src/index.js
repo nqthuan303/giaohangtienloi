@@ -43,16 +43,16 @@ console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production') {
     require('./pwa')
 } else if (process.env.NODE_ENV === 'development') {
-    let createClass = React.createClass;
-    Object.defineProperty(React, 'createClass', {
-        set: (nextCreateClass) => {
-            createClass = nextCreateClass;
-        }
-    });
-
-    const {whyDidYouUpdate} = require('why-did-you-update')
-    whyDidYouUpdate(React)
-    window.Perf = require('react-addons-perf')
+    // let createClass = React.createClass;
+    // Object.defineProperty(React, 'createClass', {
+    //     set: (nextCreateClass) => {
+    //         createClass = nextCreateClass;
+    //     }
+    // });
+    //
+    // const {whyDidYouUpdate} = require('why-did-you-update')
+    // whyDidYouUpdate(React)
+    // window.Perf = require('react-addons-perf')
 }
 
 const preloadedState = window.__PRELOADED_STATE__ || {}
