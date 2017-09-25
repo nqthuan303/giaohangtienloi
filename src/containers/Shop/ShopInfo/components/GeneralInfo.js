@@ -1,5 +1,5 @@
-import React from 'react'
-import {Grid, Header, Segment} from 'semantic-ui-react'
+import React from 'react';
+import {Grid} from 'semantic-ui-react';
 import {get} from '../../../../api/utils'
 import {geocodeByAddress} from 'react-places-autocomplete';
 import {default as ContactInfo} from './ContactInfo';
@@ -13,12 +13,21 @@ class GeneralInfo extends React.Component {
         this.state = {
             objData: {
                 name: '',
+                email: '',
+                userName: '',
+                password: '',
                 contactName: '',
                 phone: '',
                 address: '',
                 lat: '',
                 lng: '',
-                district: ''
+                district: '',
+                bankName: '',
+                bankBranch: '',
+                bankAccount: '',
+                bankNumber: '',
+                website: '',
+                status: 'active'
             },
             districts: []
         }
@@ -44,7 +53,6 @@ class GeneralInfo extends React.Component {
     onSelectAddress = (address) => {
         const {objData} = this.state
         geocodeByAddress(address, (err, { lat, lng }) => {
-            console.log(lat)
             if (err) { return }
             this.setState({
                 objData: {
@@ -78,13 +86,19 @@ class GeneralInfo extends React.Component {
                             onChangeAddress={this.onChangeAddress} />
                     </Grid.Column>
                     <Grid.Column width={8}>
-                        <AccountInfo />
+                        <AccountInfo
+                            data={objData}
+                            handleChange={this.handleChange}
+                        />
                     </Grid.Column>
                 </Grid.Row>
 
                 <Grid.Row>
                     <Grid.Column width={8}>
-                        <BankInfo />
+                        <BankInfo
+                            data={objData}
+                            handleChange={this.handleChange}
+                        />
                     </Grid.Column>
                     <Grid.Column width={8}>
                         <PaymentInfo />
