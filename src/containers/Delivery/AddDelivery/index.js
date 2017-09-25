@@ -1,18 +1,19 @@
 import React, {Component} from 'react'
 // import {connect} from 'react-redux'
 // import PropTypes from 'prop-types'
-import { Dropdown, Input, Button } from 'semantic-ui-react'
+import { Dropdown, Input, Button, Segment } from 'semantic-ui-react'
 // import { withRouter } from 'react-router-dom'
 // import OrderInStore from '../components/OrderInStore'
-// import TempOrder from '../components/TempOrder'
+import StorageOrderTable from './StorageOrderTable'
 import { get } from '../../../api/utils'
+import './styles.css'
 
 class AddDelivery extends Component {
   constructor (props) {
     super(props)
     this.state = {
       districts: [],
-      active: false
+      arrActiveButton: {}
     }
   }
 
@@ -22,40 +23,53 @@ class AddDelivery extends Component {
 
   getDistrictList () {
     get('/order/count-order-in-district?status=storage').then((result) => {
-      console.log(result)
+      let districts= result.data.data
+      let arrActiveButton = {all: false}
+      for(let i =0; i<districts.length; i++){
+        let id=districts[i]._id
+        arrActiveButton[id]= false;
+      }
       this.setState({
-        districts: result.data.data,
+        districts: districts,
+        arrActiveButton: arrActiveButton
       });
     })
   }
 
-  renderButtonDistricts =()=> {
-    const {districts, active} = this.state
-
+  renderButtonDistricts (){
+    const {districts, arrActiveButton} = this.state
     let buttonDistricts = [];
     buttonDistricts.push(<Button 
       toggle 
-      active={active} 
-      onClick={this.onClickButtonDistricts}>
+      active={arrActiveButton.all}
+      key='all'
+      onClick={()=>this.onClickButtonDistricts('all')}>
       Tất Cả
     </Button>)
     for (let i = 0; i < districts.length; i++) {
       const district = districts[i]
       buttonDistricts.push(
-        <Button 
+        <Button
+          key={district._id}
           toggle 
-          active={active} 
-          onClick={this.onClickButtonDistricts}>
-          {district.name}
+          active={arrActiveButton[district._id]} 
+          onClick={()=>this.onClickButtonDistricts(district._id)}>
+          {district.name} ({district.count})
       </Button>
       )
     }
     return buttonDistricts
   }
-  onClickButtonDistricts =()=>{
-    this.setState({ active: !this.state.active })    
+  onClickButtonDistricts (id){
+    let arrActiveButton = this.state.arrActiveButton
+    arrActiveButton[id] = !this.state.arrActiveButton[id]
+    this.setState({ 
+      arrActiveButton: arrActiveButton
+    })    
   }
   render () {
+    
+    const {arrActiveButton} =this.state
     const clientOption = [{
       key: 1,
       value: '1',
@@ -73,10 +87,15 @@ class AddDelivery extends Component {
           <Input style={{float: 'right', marginRight: '5px'}} icon='search' placeholder='Mã vận đơn...' />
         </div>
 
-        <div style={{marginBottom: '20px', display: 'inline-block', width: '100%'}}>
-          
-      </div>
-        {this.renderButtonDistricts}
+        <div className='render-button-districts'>
+          {this.renderButtonDistricts()}
+        </div>
+        <Segment attached='bottom'>
+            <StorageOrderTable
+              //ref={instance => { this.clientOrderTableRef = instance }}
+              //onOrderChange={this.onOrderChange}
+              districtsActive={arrActiveButton} />
+        </Segment>
       </div>
     )
   }
