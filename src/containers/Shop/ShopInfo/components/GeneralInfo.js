@@ -6,10 +6,11 @@ import {default as ContactInfo} from './ContactInfo';
 import {default as BankInfo} from './BankInfo';
 import {default as AccountInfo} from './AccountInfo';
 import {default as PaymentInfo} from './PaymentInfo';
+import { withRouter } from 'react-router'
 
 class GeneralInfo extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             objData: {
                 name: '',
@@ -27,6 +28,7 @@ class GeneralInfo extends React.Component {
                 bankAccount: '',
                 bankNumber: '',
                 website: '',
+                isCod: false,
                 status: 'active'
             },
             districts: []
@@ -34,7 +36,15 @@ class GeneralInfo extends React.Component {
     }
 
     componentDidMount() {
-        this.getDistrictList()
+        this.getShopInfo();
+        this.getDistrictList();
+    }
+
+    getShopInfo(){
+        const {shopId} = this.props.match.params;
+        get('/client/findOne/' + shopId).then((result) => {
+            this.setState({objData: result.data.data})
+        })
     }
 
     getDistrictList() {
@@ -66,14 +76,18 @@ class GeneralInfo extends React.Component {
     }
 
     handleChange = (e, { name, value }) => {
-        const { objData } = this.state
-        this.setState({objData: {...objData, [name]: value}})
+        const { objData } = this.state;
+        this.setState({objData: {...objData, [name]: value}});
     };
+
+    onChangeOrderType = () => {
+        const {objData} = this.state;
+        this.setState({objData: {...objData, isCod: !objData.isCod}});
+    }
 
     render() {
         const {objData, districts} = this.state;
-        console.log(objData);
-
+        
         return (
             <Grid>
                 <Grid.Row>
@@ -101,7 +115,10 @@ class GeneralInfo extends React.Component {
                         />
                     </Grid.Column>
                     <Grid.Column width={8}>
-                        <PaymentInfo />
+                        <PaymentInfo
+                            data={objData}
+                            onChangeOrderType={this.onChangeOrderType}
+                        />
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
@@ -109,4 +126,4 @@ class GeneralInfo extends React.Component {
     }
 }
 
-export default GeneralInfo
+export default withRouter(GeneralInfo)

@@ -1,24 +1,35 @@
 import React from 'react'
-import {Header, Segment} from 'semantic-ui-react'
+import PropTypes from 'prop-types'
+import {Header, Segment, Checkbox, Form} from 'semantic-ui-react'
 
-class PaymentInfo extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {}
-    }
+function PaymentInfo (props) {
+    const {onChangeOrderType, data} = props;
+    return (
+        <div>
+            <Header as='h3' block>
+                Tài khoản ngân hàng
+            </Header>
+            <Segment attached>
+                <Form>
+                    <Form.Field>
+                        <Checkbox onChange={onChangeOrderType} checked={data.isCod} radio label='COD' />
+                    </Form.Field>
 
-    render() {
-        return (
-            <div>
-                <Header as='h3' block>
-                    Hình thức thanh toán
-                </Header>
-                <Segment attached>
-                    Hình thức thanh toán
-                </Segment>
-            </div>
-        )
-    }
-}
+                    <Form.Field>
+                        <Checkbox onChange={onChangeOrderType} checked={!data.isCod} radio label='Tiền mặt' />
+                    </Form.Field>
+                </Form>
+            </Segment>
+        </div>
+    );
+};
+
+PaymentInfo.propTypes = {
+    data: PropTypes.object,
+    onChangeOrderType: PropTypes.func
+};
 
 export default PaymentInfo
+
+
+

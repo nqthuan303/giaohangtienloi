@@ -7,7 +7,7 @@ function BankInfo (props) {
     return (
         <div>
             <Header as='h3' block>
-                Thông tin liên hệ
+                Tài khoản ngân hàng
             </Header>
             <Segment attached>
                 <Form>

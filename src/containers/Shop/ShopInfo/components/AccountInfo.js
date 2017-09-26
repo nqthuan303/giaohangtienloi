@@ -12,7 +12,7 @@ function AccountInfo (props) {
     return (
         <div>
             <Header as='h3' block>
-                Thông tin liên hệ
+                Thông tin tài khoản
             </Header>
             <Segment attached>
                 <Form>
