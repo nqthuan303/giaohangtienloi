@@ -57,6 +57,7 @@ function ContactInfo (props) {
                         </Form.Field>
                         <Form.Field width={8}>
                             <Dropdown
+                                value={data.district}
                                 name="district"
                                 onChange={handleChange}
                                 placeholder='Quận/Huyện'
