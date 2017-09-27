@@ -22,7 +22,7 @@ class AddDelivery extends Component {
   }
 
   getDistrictList () {
-    get('/order/count-order-in-district?status=storage').then((result) => {
+    get('/order/count-order-each-district-and-status?status=storage').then((result) => {
       let districts= result.data.data
       let arrActiveButton = {all: false}
       for(let i =0; i<districts.length; i++){
