@@ -7,7 +7,7 @@ function PaymentInfo (props) {
     return (
         <div>
             <Header as='h3' block>
-                Tài khoản ngân hàng
+                Hình thức thanh toán
             </Header>
             <Segment attached>
                 <Form>

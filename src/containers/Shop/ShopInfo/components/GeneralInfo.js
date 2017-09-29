@@ -87,7 +87,7 @@ class GeneralInfo extends React.Component {
 
     render() {
         const {objData, districts} = this.state;
-        
+
         return (
             <Grid>
                 <Grid.Row>
