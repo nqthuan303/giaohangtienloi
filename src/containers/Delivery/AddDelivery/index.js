@@ -1,10 +1,7 @@
 import React, {Component} from 'react'
-// import {connect} from 'react-redux'
-// import PropTypes from 'prop-types'
-import { Dropdown, Input, Button, Segment } from 'semantic-ui-react'
-// import { withRouter } from 'react-router-dom'
-// import OrderInStore from '../components/OrderInStore'
-import StorageOrderTable from './StorageOrderTable'
+import { Input, Button, Segment,Select } from 'semantic-ui-react'
+import StorageOrderCard from './StorageOrderCard'
+import SelectOrderList from './SelectOrderList'
 import { get } from '../../../api/utils'
 import './styles.css'
 
@@ -13,26 +10,40 @@ class AddDelivery extends Component {
     super(props)
     this.state = {
       districts: [],
-      arrActiveButton: {}
+      arrActiveButton: {},
+      shippers: [],
+      selectedShipper: '',
+      selectList: []
     }
   }
 
   componentDidMount () {
     this.getDistrictList();
+    this.getShipperList();
   }
-
+  getShipperList () {
+    get('/user/getShipper').then((result) => {
+      let data = result.data
+      data.unshift({key: -1, value: -1, text: 'Chọn shipper'})
+      this.setState({
+        shippers: result.data
+      })
+    })
+  }
   getDistrictList () {
     get('/order/count-order-each-district-and-status?status=storage').then((result) => {
       let districts= result.data.data
-      let arrActiveButton = {all: false}
-      for(let i =0; i<districts.length; i++){
-        let id=districts[i]._id
-        arrActiveButton[id]= false;
+      if(districts){
+        let arrActiveButton = {all: false}
+        for(let i =0; i<districts.length; i++){
+          let id=districts[i]._id
+          arrActiveButton[id]= false;
+        }
+        this.setState({
+          districts: districts,
+          arrActiveButton: arrActiveButton
+        });
       }
-      this.setState({
-        districts: districts,
-        arrActiveButton: arrActiveButton
-      });
     })
   }
 
@@ -67,22 +78,28 @@ class AddDelivery extends Component {
       arrActiveButton: arrActiveButton
     })    
   }
+  onSelectShipper = (value) => {
+    this.setState({
+      selectedShipper: value
+    })
+  }
+  onClickCard(order){
+    const selectList = this.state.selectList;
+    selectList.push(order);
+    this.setState({
+      selectList: selectList
+    })
+  }
   render () {
-    
-    const {arrActiveButton} =this.state
-    const clientOption = [{
-      key: 1,
-      value: '1',
-      text: 'nguoi 1'
-    }]
+    const {arrActiveButton, shippers, selectedShipper,selectList} =this.state
     return (
       <div>
         <div>
-          <Dropdown
-            onChange={this.onSelectClient}
-            name='shipper'
-            search selection
-            placeholder='Shipper' options={clientOption} />
+        <Select
+          value={selectedShipper? selectedShipper: -1}
+          onChange={(e, {name, value}) => this.onSelectShipper(value)}
+          options={shippers} />
+
           <Button style={{float: 'right'}} primary>Tạo</Button>
           <Input style={{float: 'right', marginRight: '5px'}} icon='search' placeholder='Mã vận đơn...' />
         </div>
@@ -90,11 +107,16 @@ class AddDelivery extends Component {
         <div className='render-button-districts'>
           {this.renderButtonDistricts()}
         </div>
-        <Segment attached='bottom'>
-            <StorageOrderTable
+        <Segment >
+            <StorageOrderCard
               //ref={instance => { this.clientOrderTableRef = instance }}
               //onOrderChange={this.onOrderChange}
+              onClickCardOrder={(order)=>this.onClickCard(order)}
               districtsActive={arrActiveButton} />
+        </Segment>
+        <Segment >
+            <SelectOrderList
+              data={selectList} />
         </Segment>
       </div>
     )

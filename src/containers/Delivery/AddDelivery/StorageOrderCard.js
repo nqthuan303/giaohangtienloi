@@ -1,12 +1,9 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Icon, Table, Select, Button, Input,Card} from 'semantic-ui-react'
-import { get, post } from '../../../api/utils'
-import { toast } from 'react-toastify'
+import {Card} from 'semantic-ui-react'
+import { get } from '../../../api/utils'
 
-import {ConfirmModal} from '../../../components'
-
-export default class ClientOrderTable extends Component {
+export default class StorageOrderCard extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -15,6 +12,7 @@ export default class ClientOrderTable extends Component {
   }
 
   static propTypes = {
+    onClickCardOrder: PropTypes.func,
     districtsActive: PropTypes.object.isRequired,
   }
   componentDidMount(){
@@ -50,27 +48,28 @@ export default class ClientOrderTable extends Component {
       this.setState({orderInDistrict:orderInDistrict})
     })
   }
-
+  onClickCard (order){
+    this.props.onClickCardOrder(order)
+  }
   renderOrder () {
     const {orderInDistrict} = this.state
     let result = []
-    let count = 0
     for (let i = 0; i < orderInDistrict.length; i++) {
       const order = orderInDistrict[i]
 
-      const updateAt = new Date(order.updateAt)
-      const orderUpdateAt = updateAt.getDate() + '/' +
-      updateAt.getMonth() + ' ' +
-      updateAt.getHours() + ':' +
-      updateAt.getMinutes()
-      count++
+      const createdAt = new Date(order.createdAt)
+      const orderCreatedAt = createdAt.getDate() + '/' +
+      createdAt.getMonth() + ' ' +
+      createdAt.getHours() + ':' +
+      createdAt.getMinutes()
 
       result.push(
         <Card
           key={i}
-          header={orderUpdateAt}
+          header={orderCreatedAt}
           meta={order.id}
           description={order.reciever.address}
+          onClick={()=>this.onClickCard(order)}
         />
       )
     }
@@ -80,7 +79,7 @@ export default class ClientOrderTable extends Component {
     return (
       <div>
         <Card.Group itemsPerRow={8} stackable={true} className="order-inStore-container">
-        {this.renderOrder()}
+          {this.renderOrder()}
         </Card.Group>
         {/* <ConfirmModal
           onModalClose={this.onModalClose}
