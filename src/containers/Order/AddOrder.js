@@ -22,7 +22,7 @@ class AddOrder extends Component {
 
   getTempOrderList = () => {
     get('/order/list?status=temp').then((result) => {
-      const data = result.data
+      const data = result.data.data
       let inProcessIds = []
 
       for (let i = 0; i < data.length; i++) {

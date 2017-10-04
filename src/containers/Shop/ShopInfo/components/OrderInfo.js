@@ -1,14 +1,53 @@
 import React from 'react'
 import {Menu, Table, Icon} from 'semantic-ui-react'
+import {get} from '../../../../api/utils'
+import { withRouter } from 'react-router'
 
 class OrderInfo extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            orders: []
+        }
+    }
+
+    componentDidMount() {
+        this.getOrders();
+    }
+
+    async getOrders() {
+        const {shopId} = this.props.match.params;
+        const result = await get('/client/order-info/' + shopId);
+        const resResult = result.data;
+
+        if(resResult.status === 'success'){
+            const data = resResult.data;
+            this.setState({orders: data});
+        }
+
     }
 
     renderList(){
-        return []
+        const {orders} = this.state;
+        return orders.map((item, i) => {
+            console.log(item);
+            const {reciever, orderstatus} = item;
+            const {phoneNumbers} = reciever;
+
+            return (
+                <Table.Row key={i}>
+                    <Table.Cell>{item.id}</Table.Cell>
+                    <Table.Cell>{item.createdAt}</Table.Cell>
+                    <Table.Cell>{reciever.name}</Table.Cell>
+                    <Table.Cell>{reciever.address}</Table.Cell>
+                    <Table.Cell>{phoneNumbers[0]}</Table.Cell>
+                    <Table.Cell></Table.Cell>
+                    <Table.Cell>{orderstatus.name}</Table.Cell>
+                    <Table.Cell>Doi xoat</Table.Cell>
+                    <Table.Cell>In</Table.Cell>
+                </Table.Row>
+            );
+        })
     }
 
     render() {
@@ -31,28 +70,9 @@ class OrderInfo extends React.Component {
                 <Table.Body>
                     {this.renderList()}
                 </Table.Body>
-
-                <Table.Footer fullWidth>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan='10'>
-                            <Menu size="mini" floated='right' pagination>
-                                <Menu.Item as='a' icon>
-                                    <Icon name='left chevron'/>
-                                </Menu.Item>
-                                <Menu.Item as='a'>1</Menu.Item>
-                                <Menu.Item as='a'>2</Menu.Item>
-                                <Menu.Item as='a'>3</Menu.Item>
-                                <Menu.Item as='a'>4</Menu.Item>
-                                <Menu.Item as='a' icon>
-                                    <Icon name='right chevron'/>
-                                </Menu.Item>
-                            </Menu>
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Footer>
             </Table>
         )
     }
 }
 
-export default OrderInfo
+export default withRouter(OrderInfo)

@@ -72,7 +72,7 @@ export default class OrderTableComponent extends Component {
     getOrderList(options) {
         const url = this.buildUrl('/order/list', options)
         get(url).then((result) => {
-            this.setState({orders: result.data})
+            this.setState({orders: result.data.data})
         })
     }
 
