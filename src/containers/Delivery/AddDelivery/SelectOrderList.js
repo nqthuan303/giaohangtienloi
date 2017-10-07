@@ -10,9 +10,10 @@ export default class SelectOrderList extends Component {
 
   static propTypes = {
     data: PropTypes.array.isRequired,
+    onClickDeleteOrder: PropTypes.func
   }
-  onClickDeleteOrder(order){
-    console.log(order)
+  onClickDelete(order){
+    this.props.onClickDeleteOrder(order)
   }
   renderSelect=()=>{
     let result=[];
@@ -35,7 +36,7 @@ export default class SelectOrderList extends Component {
           <Table.Cell >
             <Icon style={{cursor: 'pointer'}}
                   name='delete' 
-                  onClick={() => this.onClickDeleteOrder(order)}/>
+                  onClick={() => this.onClickDelete(order)}/>
           </Table.Cell>
         </Table.Row>
       )

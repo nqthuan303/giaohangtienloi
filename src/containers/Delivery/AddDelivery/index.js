@@ -10,10 +10,11 @@ class AddDelivery extends Component {
     super(props)
     this.state = {
       districts: [],
-      arrActiveButton: {},
       shippers: [],
       selectedShipper: '',
-      selectList: []
+      selectList: [],
+      orderInDistrict: [],
+      arrActiveButton: {},
     }
   }
 
@@ -39,14 +40,60 @@ class AddDelivery extends Component {
           let id=districts[i]._id
           arrActiveButton[id]= false;
         }
+        this.getDistrict(arrActiveButton)
         this.setState({
           districts: districts,
           arrActiveButton: arrActiveButton
         });
+
       }
     })
   }
-
+  async getDistrict(districtsActive){
+    const {selectList} =this.state;
+    let orderInDistrict= [];
+    if(districtsActive.all){
+        for(let districtId in districtsActive){
+            let result = await get('/order/order-each-district-and-status?status=storage&districtId='+districtId);
+            let orders = result.data.data
+            for(let i =0; i<orders.length; i++){
+              let order = orders[i];
+              orderInDistrict.push(order)
+            }
+        }
+    }else{
+        for(let districtId in districtsActive){
+            if(districtsActive[districtId]){
+              let result = await get('/order/order-each-district-and-status?status=storage&districtId='+districtId);
+              let orders = result.data.data
+              for(let i =0; i<orders.length; i++){
+                let order = orders[i];
+                orderInDistrict.push(order)
+              }
+            }
+        }
+    }
+    
+    let orders = [];
+    if(selectList.length>0 && orderInDistrict.length>0){
+      for(let i=0; i<orderInDistrict.length; i++){
+        let id = orderInDistrict[i]._id;
+        let count = 0;
+        for(let k =0; k<selectList.length; k++){
+          if(id === selectList[k]._id){
+            break;
+          }
+          count++;
+        }
+        if(count !== selectList.length) continue;
+        orders.push(orderInDistrict[i]);
+      }
+    }else{
+      orders = orderInDistrict
+    }
+    this.setState({orderInDistrict: orders})
+    
+  }
   renderButtonDistricts (){
     const {districts, arrActiveButton} = this.state
     let buttonDistricts = [];
@@ -74,9 +121,10 @@ class AddDelivery extends Component {
   onClickButtonDistricts (id){
     let arrActiveButton = this.state.arrActiveButton
     arrActiveButton[id] = !this.state.arrActiveButton[id]
+    this.getDistrict(arrActiveButton)
     this.setState({ 
       arrActiveButton: arrActiveButton
-    })    
+    })
   }
   onSelectShipper = (value) => {
     this.setState({
@@ -84,14 +132,42 @@ class AddDelivery extends Component {
     })
   }
   onClickCard(order){
-    const selectList = this.state.selectList;
+    const { selectList }  = this.state;
+    let orderInDistrict = this.state.orderInDistrict;
+    for(let k =0; k<orderInDistrict.length; k++){
+      if(order._id === orderInDistrict[k]._id){
+        orderInDistrict.splice(k,1);
+        break;
+      }
+    }
     selectList.push(order);
     this.setState({
-      selectList: selectList
+      selectList: selectList,
+      orderInDistrict: orderInDistrict
+    })
+  }
+  onClickDeleteSelectList(order){
+    const { orderInDistrict ,arrActiveButton}  = this.state;
+    if(arrActiveButton.all){
+      orderInDistrict.push(order)
+    }else if(arrActiveButton[order.reciever.district._id]){
+      orderInDistrict.push(order)
+    }
+
+    let selectList = this.state.selectList;
+    for(let i=0; i<selectList.length; i++){
+      if(order._id === selectList[i]._id){
+        selectList.splice(i, 1);
+        break;
+      }
+    }
+    this.setState({
+      selectList: selectList,
+      orderInDistrict: orderInDistrict
     })
   }
   render () {
-    const {arrActiveButton, shippers, selectedShipper,selectList} =this.state
+    const {shippers, selectedShipper,selectList,orderInDistrict} =this.state
     return (
       <div>
         <div>
@@ -109,14 +185,13 @@ class AddDelivery extends Component {
         </div>
         <Segment >
             <StorageOrderCard
-              //ref={instance => { this.clientOrderTableRef = instance }}
-              //onOrderChange={this.onOrderChange}
               onClickCardOrder={(order)=>this.onClickCard(order)}
-              districtsActive={arrActiveButton} />
+              orderInDistrict={orderInDistrict} />
         </Segment>
         <Segment >
             <SelectOrderList
-              data={selectList} />
+              data={selectList} 
+              onClickDeleteOrder={(order)=>this.onClickDeleteSelectList(order)}/>
         </Segment>
       </div>
     )
