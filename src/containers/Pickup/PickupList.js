@@ -29,14 +29,13 @@ class PickupList extends Component {
     this.pickupTableRef.getPickUpList()
   }
 
-  getDistrictList () {
-    get('/order/count-order-in-district?status=pending').then((result) => {
-      console.log(result)
-      this.setState({
+  async getDistrictList () {
+    const result = await get('/order/count-order-in-district?status=pending');
+    this.setState({
         districts: result.data.data
-      })
     })
   }
+
   onChangeDistrict = (e, { name }) => {
     this.setState({ districtId: name })
   }

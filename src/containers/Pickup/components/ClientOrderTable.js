@@ -125,11 +125,11 @@ export default class ClientOrderTable extends Component {
     })
   }
 
-  async confirmCancelOrder () {
-    const {cancelOrderIds} = this.state
-    this.setState({confirmLoading: true})
+  confirmCancelOrder = async () => {
+    const {cancelOrderIds} = this.state;
+    this.setState({confirmLoading: true});
+    const setCancel = await post('/order/setStatus?status=cancel', cancelOrderIds);
 
-    const setCancel = await post('/order/setStatus?status=cancel', cancelOrderIds)
     if (setCancel.ok === true) {
       this.setState({
         confirmLoading: false,
@@ -253,7 +253,7 @@ export default class ClientOrderTable extends Component {
         <ConfirmModal
           onModalClose={this.onModalClose}
           loading={confirmLoading}
-          onConfirm={() => this.confirmCancelOrder()}
+          onConfirm={this.confirmCancelOrder}
           title="Hủy vận đơn"
           content={confirmContent}
           show={cancelOrderModal} />
