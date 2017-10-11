@@ -4,6 +4,8 @@ import {default as GeneralInfo} from './components/GeneralInfo';
 import {default as OrderInfo} from './components/OrderInfo';
 import {default as PriceInfo} from './components/PriceInfo';
 
+import './styles.css'
+
 const panes = [
     {menuItem: 'Thông tin Shop', render: () => <Tab.Pane><GeneralInfo/></Tab.Pane>},
     {menuItem: 'Đơn hàng', render: () => <Tab.Pane><OrderInfo/></Tab.Pane>},

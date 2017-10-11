@@ -1,5 +1,5 @@
 import React from 'react';
-import {Grid} from 'semantic-ui-react';
+import {Grid, Button} from 'semantic-ui-react';
 import {get} from '../../../../api/utils'
 import {geocodeByAddress} from 'react-places-autocomplete';
 import {default as ContactInfo} from './ContactInfo';
@@ -24,6 +24,7 @@ class GeneralInfo extends React.Component {
                 lng: '',
                 district: '',
                 bankName: '',
+                descriptionOfGoods: '',
                 bankBranch: '',
                 bankAccount: '',
                 bankNumber: '',
@@ -85,6 +86,11 @@ class GeneralInfo extends React.Component {
         this.setState({objData: {...objData, isCod: !objData.isCod}});
     }
 
+    onClickUpdate = async () => {
+        const {objData} = this.state;
+        console.log(objData)
+    }
+
     render() {
         const {objData, districts} = this.state;
 
@@ -119,6 +125,11 @@ class GeneralInfo extends React.Component {
                             data={objData}
                             onChangeOrderType={this.onChangeOrderType}
                         />
+                        <Button
+                            onClick={this.onClickUpdate}
+                            className="btn-update">
+                            Cập nhật
+                        </Button>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
