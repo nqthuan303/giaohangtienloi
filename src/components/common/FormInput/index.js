@@ -4,8 +4,7 @@ import {Form, Input} from 'semantic-ui-react'
 import {Field} from 'redux-form'
 
 const renderField = (props) => {
-    const {componentProps, input, meta: { touched, error, warning }} = props;
-    console.log(componentProps);
+    const {componentProps, input} = props;
 
     return (
         <Form.Field

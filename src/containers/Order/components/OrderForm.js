@@ -62,17 +62,19 @@ class OrderForm extends React.Component {
         })
     }
 
-    onSubmitForm = (e) => {
-        const {objData} = this.state
+    onSubmitForm = async (e) => {
+        const {objData} = this.state;
+        const {onSave} = this.props;
 
-        this.setState({loading: true}, function () {
-            post('/order/add', objData).then((result) => {
-                const data = result.data
-                this.setState({loading: false})
-                toast.success(data.data.message)
-                this.props.onSave()
-            })
-        })
+        this.setState({loading: true});
+        const result = await post('/order/add', objData);
+        this.setState({loading: false});
+        const data = result.data;
+
+        if(data.status === 'success'){
+            toast.success('Thêm đơn hàng thành công');
+            onSave(data.data);
+        }
     }
 
     handleChange = (e, {name, value}) => {

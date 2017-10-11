@@ -1,5 +1,5 @@
 import React from 'react'
-import {Menu, Table, Icon} from 'semantic-ui-react'
+import {Table} from 'semantic-ui-react'
 import {get} from '../../../../api/utils'
 import { withRouter } from 'react-router'
 
@@ -30,7 +30,6 @@ class OrderInfo extends React.Component {
     renderList(){
         const {orders} = this.state;
         return orders.map((item, i) => {
-            console.log(item);
             const {reciever, orderstatus} = item;
             const {phoneNumbers} = reciever;
 

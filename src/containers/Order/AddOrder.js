@@ -38,15 +38,26 @@ class AddOrder extends Component {
 
   saveOrder = () => {
     const {inProcessIds} = this.state
-    this.setState({loading: true})
+    this.setState({loading: true});
     post('/order/setStatus?status=pending', inProcessIds).then((result) => {
       this.setState({loading: false})
       const data = result.data
       if (data.status === 'success') {
-        toast.success(data.data.message)
+        toast.success(data.data.message);
+
         this.getTempOrderList()
       }
     })
+  }
+
+  onSaveTempOrder = (data) => {
+    let {tempOrders, inProcessIds} = this.state;
+    tempOrders.unshift(data);
+    inProcessIds.unshift(data._id);
+    this.setState({
+        tempOrders,
+        inProcessIds
+    });
   }
 
   removeOrder = (id) => {
@@ -72,7 +83,7 @@ class AddOrder extends Component {
       <div>
         <OrderForm
           loading={loading}
-          onSave={this.getTempOrderList}
+          onSave={this.onSaveTempOrder}
           saveOrder={this.saveOrder}
         />
         <TempOrder removeOrder={this.removeOrder} data={tempOrders} />

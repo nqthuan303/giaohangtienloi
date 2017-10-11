@@ -68,8 +68,8 @@ function ContactInfo (props) {
 
                     <Form.Field
                         onChange={handleChange}
-                        name='name'
-                        value={data.name}
+                        name='descriptionOfGoods'
+                        value={data.descriptionOfGoods}
                         control={Input} placeholder='Mô tả hàng' />
                 </Form>
             </Segment>

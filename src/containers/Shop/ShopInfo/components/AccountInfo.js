@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {Header, Segment, Form, Input, Select} from 'semantic-ui-react'
+import {Header, Segment, Form, Input, Select, Icon} from 'semantic-ui-react'
 
 const arrStatus = [
     { key: 'active', value: 'active', text: 'Hoạt động' },
@@ -18,7 +18,6 @@ function AccountInfo (props) {
                 <Form>
                     <Form.Group width="equal">
                         <Form.Field
-                            onChange={handleChange}
                             width={8}
                             name='userName'
                             value={data.userName}
@@ -26,18 +25,31 @@ function AccountInfo (props) {
                             placeholder='Tên đăng nhập' />
                         <Form.Field
                             onChange={handleChange}
+                            type="password"
                             width={8}
-                            name='phone'
-                            value={data.phone}
+                            name='password'
+                            value={data.password}
                             control={Input}
-                            placeholder='Số điện thoại' />
+                            placeholder='Mật khẩu' />
                     </Form.Group>
                     <Form.Field
+                        icon
+                        iconPosition='left'
                         onChange={handleChange}
-                        name='password'
-                        value={data.password}
+                        name='email'
+                        value={data.email}
+                        placeholder='Email'
                         control={Input}
-                        placeholder='Mật khẩu' />
+                    >
+                        <Icon name='at' />
+                        <input />
+                    </Form.Field>
+
+                    <Form.Field
+                        onChange={handleChange}
+                        name='website'
+                        value={data.website}
+                        control={Input} placeholder='Website' />
                     <Form.Field>
                         <Select
                             name="status"
@@ -46,18 +58,6 @@ function AccountInfo (props) {
                             fluid selection
                             options={arrStatus}/>
                     </Form.Field>
-
-                    <Form.Field
-                        onChange={handleChange}
-                        name='email'
-                        value={data.email}
-                        control={Input} placeholder='Email' />
-
-                    <Form.Field
-                        onChange={handleChange}
-                        name='website'
-                        value={data.website}
-                        control={Input} placeholder='Website' />
                 </Form>
             </Segment>
         </div>

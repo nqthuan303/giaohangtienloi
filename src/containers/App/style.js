@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import {media} from '../../styles/utils'
 import {Dimmer, Sidebar, Container} from 'semantic-ui-react'
 
-export const PageLayout = styled.div`height: 100%;`
+export const PageLayout = styled.div`height: 100%;position: relative;`
 
 export const MainLayout = styled.div`
   display: flex;
