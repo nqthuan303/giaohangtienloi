@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
-import { Input, Button, Segment,Select } from 'semantic-ui-react'
+import { Input, Button, Segment,Select, Modal } from 'semantic-ui-react'
 import StorageOrderCard from './StorageOrderCard'
 import SelectOrderList from './SelectOrderList'
+import EachDeliveryTable from '../Components/EachDeliveryTable'
 import { get } from '../../../api/utils'
 import './styles.css'
 
@@ -15,6 +16,9 @@ class AddDelivery extends Component {
       selectList: [],
       orderInDistrict: [],
       arrActiveButton: {},
+      showModal: false,
+      confirmSave: false,
+      
     }
   }
 
@@ -24,11 +28,13 @@ class AddDelivery extends Component {
   }
   getShipperList () {
     get('/user/getShipper').then((result) => {
-      let data = result.data
-      data.unshift({key: -1, value: -1, text: 'Chọn shipper'})
-      this.setState({
-        shippers: result.data
-      })
+      if(result.data){
+        let data = result.data
+        data.unshift({key: -1, value: -1, text: 'Chọn shipper'})
+        this.setState({
+          shippers: result.data
+        })
+      }
     })
   }
   getDistrictList () {
@@ -166,8 +172,24 @@ class AddDelivery extends Component {
       orderInDistrict: orderInDistrict
     })
   }
+  closeShowModal =()=>{
+    this.setState({
+      showModal: false,
+      confirmSave: false,
+    })
+  }
+  openShowModal =()=>{
+    this.setState({
+      showModal: true
+    })
+  }
+  onConfirmDelivery=()=>{
+    this.setState({
+      confirmSave: true
+    })
+  }
   render () {
-    const {shippers, selectedShipper,selectList,orderInDistrict} =this.state
+    const {shippers, selectedShipper,selectList,orderInDistrict,showModal,confirmSave} =this.state
     return (
       <div>
         <div>
@@ -176,7 +198,7 @@ class AddDelivery extends Component {
           onChange={(e, {name, value}) => this.onSelectShipper(value)}
           options={shippers} />
 
-          <Button style={{float: 'right'}} primary>Tạo</Button>
+          <Button style={{float: 'right'}} primary onClick={this.openShowModal}>Tạo</Button>
           <Input style={{float: 'right', marginRight: '5px'}} icon='search' placeholder='Mã vận đơn...' />
         </div>
 
@@ -193,6 +215,26 @@ class AddDelivery extends Component {
               data={selectList} 
               onClickDeleteOrder={(order)=>this.onClickDeleteSelectList(order)}/>
         </Segment>
+        <Modal
+          size={'large'}
+          open={showModal}
+          onClose={this.closeShowModal}>
+          <Modal.Header>Chuyến Đi Giao</Modal.Header>
+          <Modal.Content>
+            <EachDeliveryTable
+              selectList={selectList}
+              selectedShipper={selectedShipper}
+              confirmSave={confirmSave}/>
+          </Modal.Content>
+          <Modal.Actions>
+              <Button onClick={this.closeShowModal} color='red'>
+                  Hủy
+              </Button>
+              <Button onClick={this.onConfirmDelivery} color='green'>
+                  Xác nhận
+              </Button>
+          </Modal.Actions>
+        </Modal>
       </div>
     )
   }
