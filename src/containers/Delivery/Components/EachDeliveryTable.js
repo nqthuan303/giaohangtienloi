@@ -12,7 +12,8 @@ class EachDeliveryTable extends Component {
                 name: '',
                 phone_number: ''
             },
-            orderStatus: [],
+            orderStatusList: [],
+            orders: this.props.selectList,
         }
     }
 
@@ -40,16 +41,18 @@ class EachDeliveryTable extends Component {
     }
     async getOrderStatus(){
         const result = await get('/orderStatus/listForSelect');
-        console.log(result.data)
         if(result.data){
             this.setState({
-                orderStatus: result.data
+                orderStatusList: result.data
             })
         }
     }
-    onChangeOrderStatus(value){
-        console.log(value)
-
+    onChangeOrderStatus(index,value){
+        let orders = this.state.orders;
+        orders[index].orderstatus = value;
+        this.setState({
+            orders: orders
+        })
     }
     renderBody=()=>{
         let result=[];
@@ -77,16 +80,50 @@ class EachDeliveryTable extends Component {
               <Table.Cell >{textPhoneNUmbers}</Table.Cell>
               <Table.Cell >Tiền</Table.Cell>
               <Table.Cell >
-                {/* <Select
-                    value={selectedShipper? selectedShipper: -1}
-                    onChange={(e, {name, value}) => this.onChangeOrderStatus(value)}
-                    options={shippers} /> */}
+                <Select
+                    value={order.orderstatus}
+                    onChange={(e, {name, value}) => this.onChangeOrderStatus(i,value)}
+                    options={this.state.orderStatusList} />
               </Table.Cell>
             </Table.Row>
           )
           count++;
         }
         return result;
+    }
+    onClickAllDone=()=>{
+        let orderStatusList = this.state.orderStatusList;
+        let orders = this.state.orders;
+        let idDone = '';
+        for(let i=0; i<orderStatusList.length; i++){
+            if(orderStatusList[i].name === "done"){
+                idDone = orderStatusList[i].value;
+                break;
+            }
+        }
+        for(let i=0; i<orders.length; i++){
+            orders[i].orderstatus = idDone;
+        }
+        this.setState({
+            orders: orders
+        })
+    }
+    onClickAllShipping =()=>{
+        let orderStatusList = this.state.orderStatusList;
+        let orders = this.state.orders;
+        let idShipping = '';
+        for(let i=0; i<orderStatusList.length; i++){
+            if(orderStatusList[i].name === "shipping"){
+                idShipping = orderStatusList[i].value;
+                break;
+            }
+        }
+        for(let i=0; i<orders.length; i++){
+            orders[i].orderstatus = idShipping;
+        }
+        this.setState({
+            orders: orders
+        })
     }
     render() {
         const {shipper} = this.state
@@ -99,8 +136,8 @@ class EachDeliveryTable extends Component {
                             <Table.HeaderCell >Tổng Tiền</Table.HeaderCell>
                             <Table.HeaderCell >100000</Table.HeaderCell>
                             <Table.HeaderCell >
-                                <Button primary size="small">Đã Giao</Button>
-                                <Button primary size="small">Đang Giao</Button>
+                                <Button primary size="small" onClick={this.onClickAllDone}>Đã Giao</Button>
+                                <Button primary size="small" onClick={this.onClickAllShipping}>Đang Giao</Button>
                             </Table.HeaderCell>
                         </Table.Row>
                         <Table.Row>
