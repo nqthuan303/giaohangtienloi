@@ -1,17 +1,12 @@
 import React from 'react'
-// Redux stuff
 import thunk from 'redux-thunk'
 import {createStore, applyMiddleware, compose} from 'redux'
 import {routerMiddleware} from 'react-router-redux'
-// Application
 import rootReducer from './reducers'
 import Root from './components/views/Root'
 import {Routing, history} from './routing'
-
-// Styles
 import 'semantic-ui-css/semantic.css'
 import './styles/global'
-// Application
 import {render} from 'react-dom'
 
 const configureStore = initialState => {
@@ -20,7 +15,6 @@ const configureStore = initialState => {
     let enhancers
 
     if (process.env.NODE_ENV === 'development') {
-        // FIXME: remove duplication
         const {composeWithDevTools} = require('redux-devtools-extension')
         enhancers = composeWithDevTools(thunkApplied, routerMiddlewareApplied)
     } else {
@@ -36,23 +30,6 @@ const configureRootComponent = store => {
         store
     }
     return <Root {...propsRoot} />
-}
-
-console.log(process.env.NODE_ENV)
-
-if (process.env.NODE_ENV === 'production') {
-    require('./pwa')
-} else if (process.env.NODE_ENV === 'development') {
-    // let createClass = React.createClass;
-    // Object.defineProperty(React, 'createClass', {
-    //     set: (nextCreateClass) => {
-    //         createClass = nextCreateClass;
-    //     }
-    // });
-    //
-    // const {whyDidYouUpdate} = require('why-did-you-update')
-    // whyDidYouUpdate(React)
-    // window.Perf = require('react-addons-perf')
 }
 
 const preloadedState = window.__PRELOADED_STATE__ || {}

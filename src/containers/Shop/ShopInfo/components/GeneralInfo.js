@@ -9,7 +9,7 @@ import {default as BankInfo} from './BankInfo';
 import {default as AccountInfo} from './AccountInfo';
 import {default as PaymentInfo} from './PaymentInfo';
 import { withRouter } from 'react-router'
-import {apiLoading} from '../../../../actions';
+import {setApiLoading} from '../../../../actions';
 
 class GeneralInfo extends React.Component {
     constructor(props) {
@@ -47,17 +47,23 @@ class GeneralInfo extends React.Component {
     async getShopInfo(){
         const {shopId} = this.props.match.params;
 
-        apiLoading(true);
-        const result = await get('/client/findOne/' + shopId);
-        apiLoading(false);
-        this.setState({objData: result.data.data})
+        const {setApiLoading} = this.props;
 
+        // setApiLoading(true);
+        const result = await get('/client/findOne/' + shopId);
+        console.log(123)
+        // setApiLoading(false);
+
+        this.setState({objData: result.data.data})
     }
 
     async getDistrictList() {
-        apiLoading(true);
+        // const {setApiLoading} = this.props;
+
+        // setApiLoading(true);
         const result = await get('/district/listForSelect');
-        apiLoading(false);
+        // setApiLoading(false);
+
         this.setState({districts: result.data})
     }
 
@@ -95,7 +101,7 @@ class GeneralInfo extends React.Component {
 
     onClickUpdate = async () => {
         const {objData} = this.state;
-        const {apiLoading} = this.props;
+        const {setApiLoading} = this.props;
     }
 
     render() {
@@ -146,7 +152,7 @@ class GeneralInfo extends React.Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        apiLoading: bindActionCreators(apiLoading, dispatch)
+        setApiLoading: bindActionCreators(setApiLoading, dispatch)
     }
 }
 
