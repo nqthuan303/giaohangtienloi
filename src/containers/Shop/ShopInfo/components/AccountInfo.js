@@ -8,7 +8,7 @@ const arrStatus = [
 ];
 
 function AccountInfo (props) {
-    const {handleChange, data} = props;
+    const {handleChange, data, handleStatus} = props;
     return (
         <div>
             <Header as='h3' block>
@@ -19,6 +19,7 @@ function AccountInfo (props) {
                     <Form.Group width="equal">
                         <Form.Field
                             width={8}
+                            onChange={handleChange}
                             name='userName'
                             value={data.userName}
                             control={Input}
@@ -53,8 +54,8 @@ function AccountInfo (props) {
                     <Form.Field>
                         <Select
                             name="status"
-                            value={data.status}
-                            onChange={handleChange}
+                            value={data.status ? 'active': 'inactive'}
+                            onChange={handleStatus}
                             fluid selection
                             options={arrStatus}/>
                     </Form.Field>

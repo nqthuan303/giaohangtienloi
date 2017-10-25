@@ -1,16 +1,21 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Menu, Segment, Button} from 'semantic-ui-react'
-import {get} from '../../../api/utils'
+import {get, del} from '../../../api/utils'
 import {default as ShopListTable} from './ShopListTable';
+import {ConfirmModal} from '../../../components';
+import {toast} from 'react-toastify';
 
 class ClientList extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            confirmLoading: false,
             shopList: [],
+            confirmModal: false,
             selectedMenu: 'menu0'
         }
+        this.selectedItem = {};
     }
 
     componentDidMount() {
@@ -18,7 +23,8 @@ class ClientList extends Component {
     }
 
     async getShopList() {
-        const result = await get('/client/list')
+        const result = await get('/client/list');
+
         if (result.ok) {
             const data = result.data
             this.setState({shopList: data.data.items});
@@ -29,9 +35,32 @@ class ClientList extends Component {
         this.setState({selectedMenu: name});
     }
 
+    showConfirmModal = (value) => {
+        this.selectedItem = value;
+        this.setState({confirmModal: true});
+    }
+
+    onModalClose = () => {
+        this.setState({confirmModal: false});
+    }
+
+    onConfirm = async () => {
+        const result = await del('/client/delete/' + this.selectedItem.id);
+        this.setState({confirmModal: false});
+
+        if(result.ok){
+            toast.success('Xóa shop thành công!');
+            let {shopList} = this.state;
+            delete shopList[this.selectedItem['index']];
+            this.setState({shopList});
+        }else {
+            toast.error('Đã xảy ra lỗi, vui lòng thử lại!');
+        }
+    }
+
     render() {
 
-        const {selectedMenu, shopList} = this.state;
+        const {selectedMenu, shopList, confirmLoading, confirmModal} = this.state;
 
         return (
             <div>
@@ -58,8 +87,18 @@ class ClientList extends Component {
                     </Menu.Menu>
                 </Menu>
                 <Segment attached='bottom'>
-                    <ShopListTable data={shopList} />
+                    <ShopListTable
+                        onClickDelete={this.showConfirmModal}
+                        data={shopList} />
                 </Segment>
+
+                <ConfirmModal
+                    onModalClose={this.onModalClose}
+                    loading={confirmLoading}
+                    onConfirm={this.onConfirm}
+                    title="Xóa Shop?"
+                    content="Bạn có chắc không??"
+                    show={confirmModal}/>
             </div>
         )
     }
