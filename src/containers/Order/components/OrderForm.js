@@ -437,7 +437,7 @@ class OrderForm extends React.Component {
                             content='Tạo vận đơn'
                             icon='checkmark'
                             labelPosition='right'/>
-                        <Button type='button' content='Quay lại' icon='cancel' labelPosition='right'/>
+                        <Button type='button' content='Quay lại' icon='reply' labelPosition='right'/>
                     </Grid.Column>
                 </Grid>
             </Form>

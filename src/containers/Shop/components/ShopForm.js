@@ -2,17 +2,17 @@ import React from 'react';
 import {Grid, Button} from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux'
-import {get, post} from '../../../../api/utils'
+import {get, post} from '../../../api/utils/index'
 import {geocodeByAddress} from 'react-places-autocomplete';
 import {default as ContactInfo} from './ContactInfo';
 import {default as BankInfo} from './BankInfo';
 import {default as AccountInfo} from './AccountInfo';
 import {default as PaymentInfo} from './PaymentInfo';
 import { withRouter } from 'react-router'
-import {setApiLoading} from '../../../../actions';
+import {setApiLoading} from '../../../actions/index';
 import {toast} from 'react-toastify'
 
-class GeneralInfo extends React.Component {
+class ShopForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -52,12 +52,7 @@ class GeneralInfo extends React.Component {
     }
 
     async getDistrictList() {
-        // const {setApiLoading} = this.props;
-
-        // setApiLoading(true);
         const result = await get('/district/listForSelect');
-        // setApiLoading(false);
-
         this.setState({districts: result.data})
     }
 
@@ -141,11 +136,11 @@ class GeneralInfo extends React.Component {
                             data={objData}
                             onChangeOrderType={this.onChangeOrderType}
                         />
-                        <Button
-                            onClick={this.onClickUpdate}
-                            className="btn-update">
-                            Cập nhật
-                        </Button>
+                        <div style={{marginTop: 10}}>
+                            <Button type='button' content='Quay lại' icon='reply' labelPosition='right'/>
+                            <Button type='button' content="Lưu" icon='checkmark' labelPosition='right' onClick={this.onClickUpdate} />
+                        </div>
+
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
@@ -159,4 +154,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(null, mapDispatchToProps)(withRouter(GeneralInfo))
+export default connect(null, mapDispatchToProps)(withRouter(ShopForm))

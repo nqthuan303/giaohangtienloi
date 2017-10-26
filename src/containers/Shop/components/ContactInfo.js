@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {Header, Segment, Form, Dropdown, Input} from 'semantic-ui-react'
+import {Header, Segment, Form, Dropdown, Input, Icon} from 'semantic-ui-react'
 import PlacesAutocomplete from 'react-places-autocomplete'
 
 const placesAutocompleteOptions = {
@@ -27,23 +27,34 @@ function ContactInfo (props) {
             </Header>
             <Segment attached>
                 <Form>
-                    <Form.Field
-                        onChange={handleChange}
-                        name='name'
-                        value={data.name}
-                        control={Input} placeholder='Tên Shop' />
+                    <Form.Group width="equal">
+                        <Form.Field
+                            width={8}
+                            onChange={handleChange}
+                            name='name'
+                            value={data.name}
+                            control={Input} placeholder='Tên Shop' />
+
+                        <Form.Field
+                            width={8}
+                            onChange={handleChange}
+                            name='contactName'
+                            value={data.contactName}
+                            control={Input} placeholder='Người đại diện' />
+                    </Form.Group>
+
+
 
                     <Form.Field
-                        onChange={handleChange}
-                        name='contactName'
-                        value={data.contactName}
-                        control={Input} placeholder='Người đại diện' />
-
-                    <Form.Field
+                        icon
+                        iconPosition='left'
                         onChange={handleChange}
                         name='phone'
                         value={data.phone}
-                        control={Input} placeholder='Số điện thoại' />
+                        control={Input} placeholder='Số điện thoại'>
+                        <Icon name='phone' />
+                        <input />
+                    </Form.Field>
 
                     <Form.Group width="equal">
                         <Form.Field width={8}>
