@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {Select, Table, Button} from 'semantic-ui-react'
-import { get } from '../../../api/utils'
+import { get,post } from '../../../api/utils'
+import { toast } from 'react-toastify'
 import './styles.css'
 
 class EachDeliveryTable extends Component {
@@ -21,38 +22,46 @@ class EachDeliveryTable extends Component {
         selectList: PropTypes.array.isRequired,
         selectedShipper: PropTypes.string.isRequired,
         confirmSave: PropTypes.bool.isRequired,
+        closeShowModal: PropTypes.func,
+        onSaveData: PropTypes.func
     }
     componentDidMount(){
         this.props.selectedShipper ? this.getShipper(this.props.selectedShipper) : '';
-        this.getOrderStatus();
     }
     componentWillReceiveProps(nextProps) {
-        // if (nextProps.show !== this.state.show) {
-        //     this.setState({show: nextProps.show})
-        // }
+        if(this.props.confirmSave !== nextProps.confirmSave && nextProps.confirmSave){
+            this.saveDelivery();
+        }
+    }
+    saveDelivery(){
+        const {shipper, orders} = this.state;
+        let arrOrderId = [];
+        let delivery = {};
+        for(let i=0; i<orders.length; i++){
+            arrOrderId.push(orders[i]._id)
+        }
+        delivery.user = shipper._id;
+        delivery.orders = arrOrderId;
+        post('/delivery/add', delivery).then((result) => {
+            const data = result.data
+            if (data.status === 'success') {
+                this.props.onSaveData();
+                toast.success(data.status);
+            }else{
+                toast.error("Đã xãy ra lỗi!")
+            }
+            this.props.closeShowModal();
+          })
+
+
     }
     async getShipper(shipper){
         const result = await get('/user/findOne?id='+shipper)
-        if(result.data){
+        if(result && result.data){
             this.setState({
                 shipper: result.data
             })
         }
-    }
-    async getOrderStatus(){
-        const result = await get('/orderStatus/listForSelect');
-        if(result.data){
-            this.setState({
-                orderStatusList: result.data
-            })
-        }
-    }
-    onChangeOrderStatus(index,value){
-        let orders = this.state.orders;
-        orders[index].orderstatus = value;
-        this.setState({
-            orders: orders
-        })
     }
     renderBody=()=>{
         let result=[];
@@ -71,60 +80,21 @@ class EachDeliveryTable extends Component {
           }
           result.push(
             <Table.Row key={order._id}>
-              <Table.Cell>{count} </Table.Cell>
-              <Table.Cell>{order.id} </Table.Cell>
-              <Table.Cell >{orderCreatedAt}</Table.Cell>
-              <Table.Cell >{order.reciever.name}</Table.Cell>
-              <Table.Cell >{order.reciever.address}</Table.Cell>
-              <Table.Cell >{order.reciever.district.name}</Table.Cell>
-              <Table.Cell >{textPhoneNUmbers}</Table.Cell>
-              <Table.Cell >Tiền</Table.Cell>
-              <Table.Cell >
-                <Select
-                    value={order.orderstatus}
-                    onChange={(e, {name, value}) => this.onChangeOrderStatus(i,value)}
-                    options={this.state.orderStatusList} />
-              </Table.Cell>
+                <Table.Cell>{count} </Table.Cell>
+                <Table.Cell>{order.id} </Table.Cell>
+                <Table.Cell >{orderCreatedAt}</Table.Cell>
+                <Table.Cell >{order.reciever.name}</Table.Cell>
+                <Table.Cell >{order.reciever.address}</Table.Cell>
+                <Table.Cell >{order.reciever.district.name}</Table.Cell>
+                <Table.Cell >{textPhoneNUmbers}</Table.Cell>
+                <Table.Cell >Tiền</Table.Cell>
             </Table.Row>
           )
           count++;
         }
         return result;
     }
-    onClickAllDone=()=>{
-        let orderStatusList = this.state.orderStatusList;
-        let orders = this.state.orders;
-        let idDone = '';
-        for(let i=0; i<orderStatusList.length; i++){
-            if(orderStatusList[i].name === "done"){
-                idDone = orderStatusList[i].value;
-                break;
-            }
-        }
-        for(let i=0; i<orders.length; i++){
-            orders[i].orderstatus = idDone;
-        }
-        this.setState({
-            orders: orders
-        })
-    }
-    onClickAllShipping =()=>{
-        let orderStatusList = this.state.orderStatusList;
-        let orders = this.state.orders;
-        let idShipping = '';
-        for(let i=0; i<orderStatusList.length; i++){
-            if(orderStatusList[i].name === "shipping"){
-                idShipping = orderStatusList[i].value;
-                break;
-            }
-        }
-        for(let i=0; i<orders.length; i++){
-            orders[i].orderstatus = idShipping;
-        }
-        this.setState({
-            orders: orders
-        })
-    }
+    
     render() {
         const {shipper} = this.state
         return (
@@ -135,10 +105,6 @@ class EachDeliveryTable extends Component {
                             <Table.HeaderCell colSpan='6'>{shipper.name} - {shipper.phone_number}</Table.HeaderCell>
                             <Table.HeaderCell >Tổng Tiền</Table.HeaderCell>
                             <Table.HeaderCell >100000</Table.HeaderCell>
-                            <Table.HeaderCell >
-                                <Button primary size="small" onClick={this.onClickAllDone}>Đã Giao</Button>
-                                <Button primary size="small" onClick={this.onClickAllShipping}>Đang Giao</Button>
-                            </Table.HeaderCell>
                         </Table.Row>
                         <Table.Row>
                             <Table.HeaderCell>#</Table.HeaderCell>
@@ -149,7 +115,6 @@ class EachDeliveryTable extends Component {
                             <Table.HeaderCell>Quận</Table.HeaderCell>
                             <Table.HeaderCell>SĐT</Table.HeaderCell>
                             <Table.HeaderCell>Tiền Thu</Table.HeaderCell>
-                            <Table.HeaderCell>Trạng Thái</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                         <Table.Body>

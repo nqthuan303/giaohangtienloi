@@ -179,14 +179,23 @@ class AddDelivery extends Component {
     })
   }
   openShowModal =()=>{
-    this.setState({
-      showModal: true
-    })
+    const {selectedShipper, selectList} = this.state
+    
+    if(selectedShipper != "" && selectedShipper != -1 && selectList.length>0){
+      this.setState({
+        showModal: true
+      })
+    }
+    
   }
   onConfirmDelivery=()=>{
     this.setState({
-      confirmSave: true
+      confirmSave: true,
     })
+  }
+  onSaveData =()=>{
+    this.setState({selectList: []})
+    this.getDistrictList();
   }
   render () {
     const {shippers, selectedShipper,selectList,orderInDistrict,showModal,confirmSave} =this.state
@@ -223,8 +232,11 @@ class AddDelivery extends Component {
           <Modal.Content>
             <EachDeliveryTable
               selectList={selectList}
-              selectedShipper={selectedShipper}
-              confirmSave={confirmSave}/>
+              selectedShipper={selectedShipper.toString()}
+              confirmSave={confirmSave}
+              closeShowModal={this.closeShowModal}
+              onSaveData={this.onSaveData}
+              />
           </Modal.Content>
           <Modal.Actions>
               <Button onClick={this.closeShowModal} color='red'>
