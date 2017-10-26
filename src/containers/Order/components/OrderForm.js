@@ -24,6 +24,7 @@ class OrderForm extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            priceList: [],
             loading: false,
             objData: {
                 reciever: {
@@ -34,7 +35,8 @@ class OrderForm extends React.Component {
                     phoneNumbers: '',
                     district: '',
                     isCod: false
-                }
+                },
+                shipFee: 0
             },
             getGoodsBack: false,
             districts: [],
@@ -54,6 +56,28 @@ class OrderForm extends React.Component {
         if (loading !== nextProps.loading) {
             this.setState({loading: nextProps.loading})
         }
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        const {objData, priceList} = this.state;
+        const {objData: prevObjData, priceList: prevPriceList} = prevState;
+
+        if(priceList.length > 0 && objData.reciever.district){
+            if(
+                (objData.reciever.district !== prevObjData.reciever.district)||
+                (JSON.stringify(priceList) !== JSON.stringify(prevPriceList))
+            ){
+                this.getShipFee();
+            }
+        }
+    }
+
+    getShipFee(){
+        const {objData, priceList} = this.state;
+        const {client, reciever} = objData;
+        const {district} = reciever;
+
+        console.log(priceList);
     }
 
     onChangeGetGooodsBack = () => {
@@ -223,8 +247,8 @@ class OrderForm extends React.Component {
         if (value === objData.client) {
             return
         }
-        const clientSelected = clients[value]
-
+        const clientSelected = clients[value];
+        this.getPrice(value);
         this.setState({
             objData: {
                 ...objData,
@@ -236,7 +260,18 @@ class OrderForm extends React.Component {
                     isCod: clientSelected.isCod
                 }
             }
-        })
+        });
+    }
+
+    async getPrice(shopId){
+        const result = await get('/price/list/' + shopId);
+        if(result.ok){
+            const resData = result.data;
+            const data = resData.data;
+            if(data.length > 0){
+                this.setState({priceList: data});
+            }
+        }
     }
 
     onChangeOrderType = (e, {name, value}) => {
@@ -416,7 +451,7 @@ class OrderForm extends React.Component {
                     <Grid.Column mobile={16} tablet={8} computer={8}>
                         <p style={{fontWeight: 'bold'}}>3. Cước phí</p>
                         <Form.Field>
-                            Phí vận chuyển: 123
+                            Phí vận chuyển: {objData.shipFee}
                         </Form.Field>
                         <Form.Field inline>
                             <label>Phí phụ</label>
