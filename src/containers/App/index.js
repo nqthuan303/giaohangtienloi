@@ -107,19 +107,14 @@ class App extends Component {
         }
 
         const SidebarSemanticPusherStyledPatch =
-            !isMobile && isLoggedIn
-                ? SidebarSemanticPusherStyled.extend`
-            max-width: calc(100% - 150px);
-          `
-                : SidebarSemanticPusherStyled;
+            !isMobile && isLoggedIn ?
+                SidebarSemanticPusherStyled.extend`max-width: calc(100% - 150px);` :
+                SidebarSemanticPusherStyled;
 
-        console.log(apiLoading);
 
         return (
             <PageLayout>
-                <Dimmer style={{height: '100%'}} active={apiLoading}>
-                    <Loader />
-                </Dimmer>
+
                 <SidebarSemanticPushableStyled>
                     {isLoggedIn && <Sidebar {...sidebarProps} />}
                     <SidebarSemanticPusherStyledPatch>
@@ -132,6 +127,12 @@ class App extends Component {
                             </MainContent>
                         </MainLayout>
                     </SidebarSemanticPusherStyledPatch>
+
+
+                    <Dimmer style={{height: '100%'}} active={apiLoading}>
+                        <Loader />
+                    </Dimmer>
+
                     {isLoggedIn && sidebarOpened && <StyledDimmer {...dimmerProps} />}
                 </SidebarSemanticPushableStyled>
                 <ToastContainer
@@ -147,7 +148,7 @@ class App extends Component {
 }
 
 function mapStateToProps(state) {
-    const {sidebarOpened, isMobile, isMobileXS, isMobileSM} = state.layout
+    const {sidebarOpened, isMobile, isMobileXS, isMobileSM} = state.layout;
     const {apiLoading} = state.common;
 
     return {

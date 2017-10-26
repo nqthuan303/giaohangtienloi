@@ -34,9 +34,10 @@ export default class Root extends Component {
 
     render() {
         const {store, history, routes} = this.props;
+
         return (
-            <Provider store={store} key={Math.random()}>
-                <Router history={history} key={Math.random()}>
+            <Provider store={store}>
+                <Router history={history}>
                     <ThemeProvider theme={theme}>
                         {routes(this.authCheck)}
                     </ThemeProvider>

@@ -41,7 +41,7 @@ export default class ClientOrderInModal extends Component {
   }
 
   onClickChangeStatus (orderId, statusValue) {
-    if (statusValue === 'receiving') {
+    if (statusValue === 'pickup') {
       this.setStatus([orderId])
     }
   }
@@ -53,7 +53,7 @@ export default class ClientOrderInModal extends Component {
         const order = orders[i]
         const orderstatus = order.orderstatus
         const statusValue = orderstatus.value
-        if (statusValue === 'receiving') {
+        if (statusValue === 'pickup') {
           orderIds.push(order._id)
         }
       }

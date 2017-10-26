@@ -2,14 +2,15 @@ import React from 'react';
 import {Grid, Button} from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux'
-import {get} from '../../../../api/utils'
+import {get, post} from '../../../../api/utils'
 import {geocodeByAddress} from 'react-places-autocomplete';
 import {default as ContactInfo} from './ContactInfo';
 import {default as BankInfo} from './BankInfo';
 import {default as AccountInfo} from './AccountInfo';
 import {default as PaymentInfo} from './PaymentInfo';
 import { withRouter } from 'react-router'
-import {apiLoading} from '../../../../actions';
+import {setApiLoading} from '../../../../actions';
+import {toast} from 'react-toastify'
 
 class GeneralInfo extends React.Component {
     constructor(props) {
@@ -46,18 +47,17 @@ class GeneralInfo extends React.Component {
 
     async getShopInfo(){
         const {shopId} = this.props.match.params;
-
-        apiLoading(true);
         const result = await get('/client/findOne/' + shopId);
-        apiLoading(false);
         this.setState({objData: result.data.data})
-
     }
 
     async getDistrictList() {
-        apiLoading(true);
+        // const {setApiLoading} = this.props;
+
+        // setApiLoading(true);
         const result = await get('/district/listForSelect');
-        apiLoading(false);
+        // setApiLoading(false);
+
         this.setState({districts: result.data})
     }
 
@@ -88,6 +88,11 @@ class GeneralInfo extends React.Component {
         this.setState({objData: {...objData, [name]: value}});
     };
 
+    handleStatus = (e, {name, value}) => {
+        const {objData} = this.state;
+        this.setState({objData: {...objData, [name]: value === 'active' ? true: false}});
+    }
+
     onChangeOrderType = () => {
         const {objData} = this.state;
         this.setState({objData: {...objData, isCod: !objData.isCod}});
@@ -95,7 +100,10 @@ class GeneralInfo extends React.Component {
 
     onClickUpdate = async () => {
         const {objData} = this.state;
-        const {apiLoading} = this.props;
+        const result = await post('/client/update/' + objData._id, objData);
+        if(result.ok){
+            toast.success('Cập nhật thông tin thành công!');
+        }
     }
 
     render() {
@@ -114,6 +122,7 @@ class GeneralInfo extends React.Component {
                     </Grid.Column>
                     <Grid.Column width={8}>
                         <AccountInfo
+                            handleStatus={this.handleStatus}
                             data={objData}
                             handleChange={this.handleChange}
                         />
@@ -146,7 +155,7 @@ class GeneralInfo extends React.Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        apiLoading: bindActionCreators(apiLoading, dispatch)
+        setApiLoading: bindActionCreators(setApiLoading, dispatch)
     }
 }
 
