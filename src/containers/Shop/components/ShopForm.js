@@ -15,39 +15,45 @@ import {toast} from 'react-toastify'
 class ShopForm extends React.Component {
     constructor(props) {
         super(props);
+        this.shopId = this.props.match.params.shopId;
         this.state = {
-            objData: {
-                name: '',
-                email: '',
-                userName: '',
-                password: '',
-                contactName: '',
-                phone: '',
-                address: '',
-                lat: '',
-                lng: '',
-                district: '',
-                bankName: '',
-                descriptionOfGoods: '',
-                bankBranch: '',
-                bankAccount: '',
-                bankNumber: '',
-                website: '',
-                isCod: false,
-                status: 'active'
-            },
+            objData: this.initData(),
             districts: []
         }
     }
 
+    initData(){
+        return {
+            name: '',
+            email: '',
+            userName: '',
+            password: '',
+            contactName: '',
+            phone: '',
+            address: '',
+            lat: '',
+            lng: '',
+            district: '',
+            bankName: '',
+            descriptionOfGoods: '',
+            bankBranch: '',
+            bankAccount: '',
+            bankNumber: '',
+            website: '',
+            isCod: false,
+            status: true
+        }
+    }
+
     componentDidMount() {
-        this.getShopInfo();
+        if(this.shopId){
+            this.getShopInfo();
+        }
         this.getDistrictList();
     }
 
     async getShopInfo(){
-        const {shopId} = this.props.match.params;
-        const result = await get('/client/findOne/' + shopId);
+        const result = await get('/client/findOne/' + this.shopId);
         this.setState({objData: result.data.data})
     }
 
@@ -93,11 +99,18 @@ class ShopForm extends React.Component {
         this.setState({objData: {...objData, isCod: !objData.isCod}});
     }
 
-    onClickUpdate = async () => {
+    onClickSave = async () => {
         const {objData} = this.state;
-        const result = await post('/client/update/' + objData._id, objData);
-        if(result.ok){
-            toast.success('Cập nhật thông tin thành công!');
+        const url = this.shopId ? '/client/update/' + this.shopId: '/client/add';
+        const result = await post(url, objData);
+        const resData = result.data;
+
+        if(resData.status === 'success'){
+            const message = (this.shopId ? 'Cập nhật': 'Thêm') + ' thành công!';
+            this.setState({objData: this.initData()});
+            toast.success(message);
+        }else {
+            toast.error('Đã xảy ra lỗi!!');
         }
     }
 
@@ -138,7 +151,7 @@ class ShopForm extends React.Component {
                         />
                         <div style={{marginTop: 10}}>
                             <Button type='button' content='Quay lại' icon='reply' labelPosition='right'/>
-                            <Button type='button' content="Lưu" icon='checkmark' labelPosition='right' onClick={this.onClickUpdate} />
+                            <Button type='button' content="Lưu" icon='checkmark' labelPosition='right' onClick={this.onClickSave} />
                         </div>
 
                     </Grid.Column>
