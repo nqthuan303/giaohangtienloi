@@ -74,10 +74,18 @@ class OrderForm extends React.Component {
 
     getShipFee(){
         const {objData, priceList} = this.state;
-        const {client, reciever} = objData;
+        const {reciever} = objData;
         const {district} = reciever;
-
-        console.log(priceList);
+        let shipFee = 0;
+        for(let i=0; i< priceList.length; i++){
+            const objPrice = priceList[i];
+            const districtInPrice = objPrice.districts;
+            if(districtInPrice.indexOf(district) !== -1){
+                shipFee = objPrice.price;
+                break;
+            }
+        }
+        this.setState({objData: {...objData, shipFee}});
     }
 
     onChangeGetGooodsBack = () => {
@@ -268,9 +276,7 @@ class OrderForm extends React.Component {
         if(result.ok){
             const resData = result.data;
             const data = resData.data;
-            if(data.length > 0){
-                this.setState({priceList: data});
-            }
+            this.setState({priceList: data});
         }
     }
 
