@@ -24,8 +24,10 @@ class OrderForm extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            priceList: [],
             loading: false,
             objData: {
+                bonusFee: 0,
                 reciever: {
                     address: ''
                 },
@@ -34,7 +36,9 @@ class OrderForm extends React.Component {
                     phoneNumbers: '',
                     district: '',
                     isCod: false
-                }
+                },
+                goods: {},
+                shipFee: 0
             },
             getGoodsBack: false,
             districts: [],
@@ -54,6 +58,36 @@ class OrderForm extends React.Component {
         if (loading !== nextProps.loading) {
             this.setState({loading: nextProps.loading})
         }
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        const {objData, priceList} = this.state;
+        const {objData: prevObjData, priceList: prevPriceList} = prevState;
+
+        if(priceList.length > 0 && objData.reciever.district){
+            if(
+                (objData.reciever.district !== prevObjData.reciever.district)||
+                (JSON.stringify(priceList) !== JSON.stringify(prevPriceList))
+            ){
+                this.getShipFee();
+            }
+        }
+    }
+
+    getShipFee(){
+        const {objData, priceList} = this.state;
+        const {reciever} = objData;
+        const {district} = reciever;
+        let shipFee = 0;
+        for(let i=0; i< priceList.length; i++){
+            const objPrice = priceList[i];
+            const districtInPrice = objPrice.districts;
+            if(districtInPrice.indexOf(district) !== -1){
+                shipFee = objPrice.price;
+                break;
+            }
+        }
+        this.setState({objData: {...objData, shipFee}});
     }
 
     onChangeGetGooodsBack = () => {
@@ -223,8 +257,8 @@ class OrderForm extends React.Component {
         if (value === objData.client) {
             return
         }
-        const clientSelected = clients[value]
-
+        const clientSelected = clients[value];
+        this.getPrice(value);
         this.setState({
             objData: {
                 ...objData,
@@ -236,7 +270,16 @@ class OrderForm extends React.Component {
                     isCod: clientSelected.isCod
                 }
             }
-        })
+        });
+    }
+
+    async getPrice(shopId){
+        const result = await get('/price/list/' + shopId);
+        if(result.ok){
+            const resData = result.data;
+            const data = resData.data;
+            this.setState({priceList: data});
+        }
     }
 
     onChangeOrderType = (e, {name, value}) => {
@@ -256,7 +299,9 @@ class OrderForm extends React.Component {
             objData,
             addPhoneNumber, clientOption,
             loading, districts, getGoodsBack
-        } = this.state
+        } = this.state;
+
+        const {goods} = objData;
 
         const senderInputProps = {
             value: objData.sender.address,
@@ -329,15 +374,9 @@ class OrderForm extends React.Component {
                 <Grid>
                     <Grid.Column mobile={16} tablet={8} computer={8}>
                         <p style={{fontWeight: 'bold'}}>1. Người nhận</p>
+
                         <Form.Field width={12}>
-                            <Form.Input
-                                name="reciever.name"
-                                label='Họ tên'
-                                placeholder='Họ tên'
-                                onChange={this.handleChange}/>
-                        </Form.Field>
-                        <Form.Field width={12}>
-                            <label>Số điện thoại</label>
+                            <label>Số điện thoại (*)</label>
                             <Input
                                 action={{icon: 'add', type: 'button', onClick: this.onAddPhoneNumber}}
                                 onChange={(e) => this.onChangePhoneNumber(e, 0)}
@@ -355,9 +394,17 @@ class OrderForm extends React.Component {
                                     placeholder='Số điện thoại 1'/>
                             </Form.Field> : ''}
 
+                        <Form.Field width={12}>
+                            <Form.Input
+                                name="reciever.name"
+                                label='Họ tên (*)'
+                                placeholder='Họ tên'
+                                onChange={this.handleChange}/>
+                        </Form.Field>
+
                         <Form.Group width="equal">
                             <Form.Field width={8}>
-                                <label>Địa chỉ</label>
+                                <label>Địa chỉ (*)</label>
                                 <PlacesAutocomplete
                                     value={objData.reciever.address}
                                     classNames={{
@@ -368,7 +415,7 @@ class OrderForm extends React.Component {
                                     onSelect={this.onSelectRecieverAddress}/>
                             </Form.Field>
                             <Form.Field width={8}>
-                                <label>Quận/Huyện</label>
+                                <label>Quận/Huyện (*)</label>
                                 <Dropdown
                                     name="reciever.district"
                                     onChange={this.handleChange}
@@ -382,17 +429,33 @@ class OrderForm extends React.Component {
                         <Form.Group widths='equal'>
                             <Form.Field>
                                 <Form.Input
-                                    name="goodsName"
-                                    onChange={this.handleChange}
-                                    label='Tên hàng' placeholder='Tên hàng'/>
-                            </Form.Field>
-                            <Form.Field>
-                                <Form.Input
                                     name='goodsValue'
                                     onChange={this.handleChange}
                                     label='Trị giá hàng'
                                     placeholder='Trị giá hàng'/>
                             </Form.Field>
+                        </Form.Group>
+
+
+                        <Form.Group width="equal">
+                            <Form.Field
+                                type="number"
+                                onChange={this.handleChange}
+                                name='goods.length'
+                                value={goods.length}
+                                control={Input} placeholder='Dài (cm)'/>
+                            <Form.Field
+                                type="number"
+                                onChange={this.handleChange}
+                                name='goods.width'
+                                value={goods.width}
+                                control={Input} placeholder='Rộng (cm)'/>
+                            <Form.Field
+                                type="number"
+                                onChange={this.handleChange}
+                                name='goods.height'
+                                value={goods.height}
+                                control={Input} placeholder='Cao (cm)'/>
                         </Form.Group>
 
                         <Form.Group widths='equal'>
@@ -416,11 +479,14 @@ class OrderForm extends React.Component {
                     <Grid.Column mobile={16} tablet={8} computer={8}>
                         <p style={{fontWeight: 'bold'}}>3. Cước phí</p>
                         <Form.Field>
-                            Phí vận chuyển: 123
+                            Phí vận chuyển: {objData.shipFee}
                         </Form.Field>
                         <Form.Field inline>
                             <label>Phí phụ</label>
                             <Input
+                                type="number"
+                                name="bonusFee"
+                                onChange={this.handleChange}
                                 icon='money' iconPosition='left'
                                 label={{basic: true, content: 'đ'}}
                                 labelPosition='right'
@@ -429,7 +495,7 @@ class OrderForm extends React.Component {
                         </Form.Field>
                         <p><i>Điều chỉnh theo đơn hàng thực tế</i></p>
                         <Form.Field>
-                            <label>Tổng phí: 2000</label>
+                            <label>Tổng phí: {Number(objData.shipFee) + Number(objData.bonusFee)}</label>
                         </Form.Field>
                         <p style={{fontWeight: 'bold'}}>4. Hình thức thu tiền</p>
 

@@ -32,6 +32,7 @@ class PriceInfo extends React.Component {
 
     async getDistrictList() {
         const result = await get('/district/listForSelect');
+        this.districts = result.data;
         this.setState({districts: result.data})
     }
 
@@ -102,9 +103,33 @@ class PriceInfo extends React.Component {
     }
 
     onClickEdit (item, index) {
+        const {prices} = this.state;
         this.selectedItem = {id: item._id, index};
 
+        let selectedDistricts = [];
+
+        for(let i=0; i< prices.length; i++){
+            const price = prices[i];
+            if(price._id === item._id){
+                continue;
+            }
+            const {districts} = price;
+            for(let j=0; j< districts.length; j++){
+                selectedDistricts.push(districts[j]);
+            }
+        }
+
+        let tempDistricts = []
+        for(let i=0; i< this.districts.length; i++){
+            const district = this.districts[i];
+            if(selectedDistricts.indexOf(district.value) === -1){
+                tempDistricts.push(district);
+            }
+        }
+
+
         this.setState({
+            districts: tempDistricts,
             objData: {
                 districts: item.districts,
                 area: item.area,
@@ -139,15 +164,34 @@ class PriceInfo extends React.Component {
             });
             toast.success('Xóa khu vực thành công!');
         }else {
-            toast.error('Đã xảy ra lỗi trong quá trình xóa!')
+            toast.error('Đã xảy ra lỗi!')
         }
 
     }
 
     onClickAdd = () => {
+        const {prices} = this.state;
+        let selectedDistricts = [];
+
+        for(let i=0; i< prices.length; i++){
+            const price = prices[i];
+            const {districts} = price;
+            for(let j=0; j< districts.length; j++){
+                selectedDistricts.push(districts[j]);
+            }
+        }
+
+        let tempDistricts = []
+        for(let i=0; i< this.districts.length; i++){
+            const district = this.districts[i];
+            if(selectedDistricts.indexOf(district.value) === -1){
+                tempDistricts.push(district);
+            }
+        }
 
         this.setState({
             showModal: true,
+            districts: tempDistricts,
             objData: {
                 districts: [],
                 area: '',

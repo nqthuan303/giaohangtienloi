@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { Menu, Segment, Button} from 'semantic-ui-react'
+import {Menu, Segment, Button} from 'semantic-ui-react'
 import {get, del} from '../../../api/utils'
 import {default as ShopListTable} from './ShopListTable';
 import {ConfirmModal} from '../../../components';
 import {toast} from 'react-toastify';
+import {Goto} from '../../../components'
 
 class ClientList extends Component {
     constructor(props) {
@@ -31,7 +32,7 @@ class ClientList extends Component {
         }
     }
 
-    onChangeMenu = (e, { name }) => {
+    onChangeMenu = (e, {name}) => {
         this.setState({selectedMenu: name});
     }
 
@@ -48,12 +49,12 @@ class ClientList extends Component {
         const result = await del('/client/delete/' + this.selectedItem.id);
         this.setState({confirmModal: false});
 
-        if(result.ok){
+        if (result.ok) {
             toast.success('Xóa shop thành công!');
             let {shopList} = this.state;
             delete shopList[this.selectedItem['index']];
             this.setState({shopList});
-        }else {
+        } else {
             toast.error('Đã xảy ra lỗi, vui lòng thử lại!');
         }
     }
@@ -82,14 +83,16 @@ class ClientList extends Component {
 
                     <Menu.Menu position='right'>
                         <Menu.Item>
-                            <Button content='Lịch sử lấy hàng' icon='right arrow' labelPosition='right'/>
+                            <Goto text="Thêm shop" url="/shop/add" />
+                            {/*<Button onClick={this.clickAddShop} content='Thêm shop' icon='right arrow'*/}
+                                    {/*labelPosition='right'/>*/}
                         </Menu.Item>
                     </Menu.Menu>
                 </Menu>
                 <Segment attached='bottom'>
                     <ShopListTable
                         onClickDelete={this.showConfirmModal}
-                        data={shopList} />
+                        data={shopList}/>
                 </Segment>
 
                 <ConfirmModal
