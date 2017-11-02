@@ -1,73 +1,68 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Table} from 'semantic-ui-react'
+import {Table, Button, Select} from 'semantic-ui-react'
 import { get,post } from '../../../api/utils'
 import { toast } from 'react-toastify'
-import './styles.css'
+import './styles.scss'
 
-class EachDeliveryTable extends Component {
+class EachDelivery extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            shipper:{
-                name: '',
-                phone_number: ''
-            },
-            orderStatusList: [],
-            orders: this.props.selectList,
+            orderStatus: [],
         }
     }
 
     static propTypes = {
-        selectList: PropTypes.array.isRequired,
-        selectedShipper: PropTypes.string.isRequired,
-        confirmSave: PropTypes.bool.isRequired,
+        delivery: PropTypes.object.isRequired,
         closeShowModal: PropTypes.func,
-        onSaveData: PropTypes.func
     }
     componentDidMount(){
-        this.props.selectedShipper ? this.getShipper(this.props.selectedShipper) : '';
+        this.getOrderStatus();
     }
     componentWillReceiveProps(nextProps) {
-        if(this.props.confirmSave !== nextProps.confirmSave && nextProps.confirmSave){
-            this.saveDelivery();
-        }
     }
-    saveDelivery(){
-        const {shipper, orders} = this.state;
-        let arrOrderId = [];
-        let delivery = {};
-        for(let i=0; i<orders.length; i++){
-            arrOrderId.push(orders[i]._id)
-        }
-        delivery.user = shipper._id;
-        delivery.orders = arrOrderId;
-        post('/delivery/add', delivery).then((result) => {
-            const data = result.data
-            if (data.status === 'success') {
-                this.props.onSaveData();
-                toast.success(data.status);
-            }else{
-                toast.error("Đã xãy ra lỗi!")
-            }
-            this.props.closeShowModal();
-          })
+    // saveDelivery(){
+    //     const {shipper, orders} = this.state;
+    //     let arrOrderId = [];
+    //     let delivery = {};
+    //     for(let i=0; i<orders.length; i++){
+    //         arrOrderId.push(orders[i]._id)
+    //     }
+    //     delivery.user = shipper._id;
+    //     delivery.orders = arrOrderId;
+    //     post('/delivery/add', delivery).then((result) => {
+    //         const data = result.data
+    //         if (data.status === 'success') {
+    //             this.props.onSaveData();
+    //             toast.success(data.status);
+    //         }else{
+    //             toast.error("Đã xãy ra lỗi!")
+    //         }
+    //         this.props.closeShowModal();
+    //       })
 
 
+    // }
+    closeShowModal = ()=>{
+        this.props.closeShowModal();
     }
-    async getShipper(shipper){
-        const result = await get('/user/findOne?id='+shipper)
+    async getOrderStatus() {
+        const result = await get('/orderstatus/listForSelect');
         if(result && result.data){
-            this.setState({
-                shipper: result.data
-            })
+            this.setState({orderStatus: result.data})
         }
+        
+    }
+    onSelectOrderStatus(orderId, value){
+        console.log(value)
     }
     renderBody=()=>{
+        const {orderStatus} = this.state;
         let result=[];
         let count =1;
-        for(let i=0; i<this.props.selectList.length; i++){
-          const order = this.props.selectList[i];
+        for(let i=0; i<this.props.delivery.orders.length; i++){
+          const order = this.props.delivery.orders[i];
           const createdAt = new Date(order.createdAt);
           const orderCreatedAt = createdAt.getDate() + '/' +
           createdAt.getMonth() + ' ' +
@@ -88,6 +83,13 @@ class EachDeliveryTable extends Component {
                 <Table.Cell >{order.reciever.district.name}</Table.Cell>
                 <Table.Cell >{textPhoneNUmbers}</Table.Cell>
                 <Table.Cell >Tiền</Table.Cell>
+                <Table.Cell >
+                    <Select
+                        //value={order.orderstatus}
+                        defaultValue={order.orderstatus}
+                        onChange={(e, {name, value}) => this.onSelectOrderStatus(order._id,value)}
+                        options={orderStatus} />
+                </Table.Cell>
             </Table.Row>
           )
           count++;
@@ -96,15 +98,16 @@ class EachDeliveryTable extends Component {
     }
     
     render() {
-        const {shipper} = this.state
+        const {delivery} = this.props;
         return (
             <div>
                 <Table celled compact className="each-delivery-table">
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell colSpan='6'>{shipper.name} - {shipper.phone_number}</Table.HeaderCell>
+                            <Table.HeaderCell colSpan='6'>{delivery.user.name} - {delivery.user.phone_number}</Table.HeaderCell>
                             <Table.HeaderCell >Tổng Tiền</Table.HeaderCell>
                             <Table.HeaderCell >100000</Table.HeaderCell>
+                            <Table.HeaderCell ></Table.HeaderCell>
                         </Table.Row>
                         <Table.Row>
                             <Table.HeaderCell>#</Table.HeaderCell>
@@ -115,15 +118,25 @@ class EachDeliveryTable extends Component {
                             <Table.HeaderCell>Quận</Table.HeaderCell>
                             <Table.HeaderCell>SĐT</Table.HeaderCell>
                             <Table.HeaderCell>Tiền Thu</Table.HeaderCell>
+                            <Table.HeaderCell>Trạng Thái</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                         <Table.Body>
                             {this.renderBody()}
                         </Table.Body>
                 </Table>
+                <div style={{textAlign: 'center'}}>
+                    <Button color='green'>
+                        Xác nhận
+                    </Button>
+                    <Button onClick={this.closeShowModal} color='red'>
+                        Hủy
+                    </Button>
+                </div>
+                
             </div>
         )
     }
 }
 
-export default EachDeliveryTable
+export default EachDelivery

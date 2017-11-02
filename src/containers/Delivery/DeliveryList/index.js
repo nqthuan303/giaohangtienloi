@@ -1,14 +1,15 @@
-import React, {Component} from 'react'
+import React, {Component} from 'react';
 // import {connect} from 'react-redux'
 // import PropTypes from 'prop-types'
 // import { Tab, Segment, Button, Icon, Input } from 'semantic-ui-react'
-import {Tab,Button, Icon} from 'semantic-ui-react'
-import DeliveryTable from './DeliveryTable'
-import {withRouter} from 'react-router'
+import {Tab,Button, Icon} from 'semantic-ui-react';
+import DeliveryUnComplete from './DeliveryUnComplete';
+import DeliveryComplete from './DeliveryComplete'
+import {withRouter} from 'react-router';
 
 const panes = [
-  { menuItem: 'Chưa kết thúc', render: () => <Tab.Pane><DeliveryTable /></Tab.Pane> },
-  { menuItem: 'Đã kết thúc', render: () => <Tab.Pane><DeliveryTable /></Tab.Pane> }
+  { menuItem: 'Chưa kết thúc', render: () => <Tab.Pane><DeliveryUnComplete /></Tab.Pane> },
+  { menuItem: 'Đã kết thúc', render: () => <Tab.Pane><DeliveryComplete /></Tab.Pane> }
 ]
 
 const AddDelivery = withRouter(({ history }) => (
