@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {reduxForm} from 'redux-form'
-import {Grid, Button, Select, Form, Dropdown, Input} from 'semantic-ui-react'
+import {Grid, Button, Select, Form, Dropdown, Input, Radio, TextArea} from 'semantic-ui-react'
 import {get, post} from '../../../api/utils'
 import PlacesAutocomplete, {geocodeByAddress} from 'react-places-autocomplete'
 import {toast} from 'react-toastify'
+import './OrderForm.css';
 
 let clients = {}
 
@@ -25,6 +26,7 @@ class OrderForm extends React.Component {
         super(props)
         this.state = {
             priceList: [],
+            whoPay: '',
             loading: false,
             objData: {
                 bonusFee: 0,
@@ -42,6 +44,7 @@ class OrderForm extends React.Component {
             },
             getGoodsBack: false,
             districts: [],
+            wards: [],
             clientOption: [],
             addPhoneNumber: false
         }
@@ -90,12 +93,6 @@ class OrderForm extends React.Component {
         this.setState({objData: {...objData, shipFee}});
     }
 
-    onChangeGetGooodsBack = () => {
-        this.setState({
-            getGoodsBack: !this.state.getGoodsBack
-        })
-    }
-
     onSubmitForm = async (e) => {
         const {objData} = this.state;
         const {onSave} = this.props;
@@ -127,6 +124,23 @@ class OrderForm extends React.Component {
             })
         }
     };
+
+    onChangeDistrict = (e, {name, value}) => {
+        const {objData} = this.state;
+        this.getWardList(value);
+        this.setState({objData: {...objData, [name]: value}});
+    }
+
+    async getWardList(districtId){
+        const result = await get('/ward/listForSelect?districtId=' + districtId);
+        const res = result.data;
+
+        if(res.status === 'success'){
+            const {data} = res;
+            console.log(data);
+            this.setState({wards: data});
+        }
+    }
 
     onChangeRecieverAddress = (address) => {
         const {objData} = this.state
@@ -294,11 +308,15 @@ class OrderForm extends React.Component {
         });
     }
 
+    changeWhoPay = (e, { value }) => {
+        this.setState({whoPay: value});
+    }
+
     render() {
         const {
-            objData,
+            objData, whoPay,
             addPhoneNumber, clientOption,
-            loading, districts, getGoodsBack
+            loading, districts, wards
         } = this.state;
 
         const {goods} = objData;
@@ -340,7 +358,8 @@ class OrderForm extends React.Component {
                         <PlacesAutocomplete
                             value={objData.sender.address}
                             classNames={{
-                                autocompleteContainer: 'my-autocomplete-container'
+                                autocompleteContainer: 'my-autocomplete-container',
+                                root: 'sender-address'
                             }}
                             options={placesAutocompleteOptions}
                             inputProps={senderInputProps}
@@ -375,9 +394,10 @@ class OrderForm extends React.Component {
                     <Grid.Column mobile={16} tablet={8} computer={8}>
                         <p style={{fontWeight: 'bold'}}>1. Người nhận</p>
 
-                        <Form.Field width={12}>
-                            <label>Số điện thoại (*)</label>
+                        <Form.Field inline>
+                            <label style={{width: '100px'}}>Số điện thoại (*)</label>
                             <Input
+                                style={{width: '70%'}}
                                 action={{icon: 'add', type: 'button', onClick: this.onAddPhoneNumber}}
                                 onChange={(e) => this.onChangePhoneNumber(e, 0)}
                                 name="reciever.phoneNumbers"
@@ -385,105 +405,143 @@ class OrderForm extends React.Component {
                         </Form.Field>
 
                         {addPhoneNumber
-                            ? <Form.Field width={12}>
-                                <label>Số điện thoại 1</label>
+                            ? <Form.Field inline>
+                                <label style={{width: '100px'}}>Số điện thoại 1</label>
                                 <Input
+                                    style={{width: '70%'}}
                                     action={{icon: 'minus', type: 'button', onClick: this.onRemovePhoneNumber}}
                                     onChange={(e) => this.onChangePhoneNumber(e, 1)}
                                     name="reciever.phoneNumbers"
                                     placeholder='Số điện thoại 1'/>
                             </Form.Field> : ''}
 
-                        <Form.Field width={12}>
-                            <Form.Input
+                        <Form.Field inline>
+                            <label style={{width: '100px'}}>Họ tên (*)</label>
+                            <Input
+                                style={{width: '70%'}}
                                 name="reciever.name"
-                                label='Họ tên (*)'
                                 placeholder='Họ tên'
                                 onChange={this.handleChange}/>
                         </Form.Field>
 
-                        <Form.Group width="equal">
-                            <Form.Field width={8}>
-                                <label>Địa chỉ (*)</label>
-                                <PlacesAutocomplete
-                                    value={objData.reciever.address}
-                                    classNames={{
-                                        autocompleteContainer: 'my-autocomplete-container'
-                                    }}
-                                    options={placesAutocompleteOptions}
-                                    inputProps={recieverInputProps}
-                                    onSelect={this.onSelectRecieverAddress}/>
-                            </Form.Field>
-                            <Form.Field width={8}>
-                                <label>Quận/Huyện (*)</label>
+                        <Form.Field inline>
+                            <label style={{width: '100px'}}>Địa chỉ (*)</label>
+                            <PlacesAutocomplete
+                                value={objData.reciever.address}
+                                classNames={{
+                                    root: 'reciever-address',
+                                    autocompleteContainer: 'my-autocomplete-container'
+                                }}
+                                options={placesAutocompleteOptions}
+                                inputProps={recieverInputProps}
+                                onSelect={this.onSelectRecieverAddress}/>
+                        </Form.Field>
+
+                        <Form.Group>
+                            <label style={{width: '110px'}}></label>
+                            <Form.Field width={5}>
                                 <Dropdown
                                     name="reciever.district"
-                                    onChange={this.handleChange}
-                                    placeholder='Chọn Quận/Huyện'
+                                    onChange={this.onChangeDistrict}
+                                    placeholder='Quận/Huyện'
                                     fluid search selection
                                     options={districts}/>
                             </Form.Field>
-                        </Form.Group>
-
-                        <p style={{fontWeight: 'bold'}}>2. Hàng hóa</p>
-                        <Form.Group widths='equal'>
-                            <Form.Field>
-                                <Form.Input
-                                    name='goodsValue'
+                            <Form.Field width={6}>
+                                <Dropdown
+                                    name="reciever.ward"
                                     onChange={this.handleChange}
-                                    label='Trị giá hàng'
-                                    placeholder='Trị giá hàng'/>
+                                    placeholder='Phường/Xã'
+                                    fluid search selection
+                                    options={wards}/>
                             </Form.Field>
                         </Form.Group>
 
 
-                        <Form.Group width="equal">
+                        <p style={{fontWeight: 'bold'}}>2. Hàng hóa</p>
+
+                        <Form.Field inline>
+                            <label style={{width: '100px'}}>Khối lượng (*)</label>
+                            <Input
+                                style={{width: '70%'}}
+                                name="goods.weight"
+                                placeholder='Khối lượng'
+                                onChange={this.handleChange}/>
+
+                        </Form.Field>
+                        <Form.Group>
+                            <label style={{width: '110px', paddingLeft: '5px', fontWeight: 'bold'}}>Quy đổi</label>
                             <Form.Field
+                                width={3}
                                 type="number"
                                 onChange={this.handleChange}
                                 name='goods.length'
                                 value={goods.length}
-                                control={Input} placeholder='Dài (cm)'/>
+                                control={Input} placeholder='Dài'/>
                             <Form.Field
+                                width={3}
                                 type="number"
                                 onChange={this.handleChange}
                                 name='goods.width'
                                 value={goods.width}
-                                control={Input} placeholder='Rộng (cm)'/>
+                                control={Input} placeholder='Rộng'/>
                             <Form.Field
+                                width={3}
                                 type="number"
                                 onChange={this.handleChange}
                                 name='goods.height'
                                 value={goods.height}
-                                control={Input} placeholder='Cao (cm)'/>
+                                control={Input} placeholder='Cao'/>
                         </Form.Group>
 
-                        <Form.Group widths='equal'>
-                            <Form.Field width={8}>
-                                <Form.Radio toggle onChange={this.onChangeGetGooodsBack}/>
-                            </Form.Field>
-                            <Form.Field width={8}>
-                                <Form.Input name="goodsBackDesc" disabled={!getGoodsBack} placeholder='Lấy hàng về'/>
-                            </Form.Field>
-
-                        </Form.Group>
-
-                        <Form.Field>
-                            <Form.Input
+                        <Form.Field inline>
+                            <label style={{width: '100px'}}>Yêu cầu</label>
+                            <Input
+                                style={{width: '70%'}}
                                 name='require'
                                 onChange={this.handleChange}
-                                label='Yêu cầu lúc giao'
                                 placeholder='(Không bắt buộc)'/>
                         </Form.Field>
+
+                        <Form.Group inline>
+                            <label style={{width: '100px'}}></label>
+                            <Form.Field>
+                                <Radio
+                                    label='Đổi hàng'
+                                    name='whoPay'
+                                    value='sender'
+                                    checked={whoPay === 'sender'}
+                                    onChange={this.changeWhoPay}
+                                />
+                            </Form.Field>
+                            <Form.Field>
+                                <Radio
+                                    label='Chỉ lấy hàng'
+                                    name='whoPay'
+                                    value='reciever'
+                                    checked={whoPay === 'reciever'}
+                                    onChange={this.changeWhoPay}
+                                />
+                            </Form.Field>
+                        </Form.Group>
+
+                        <Form.Field inline>
+                            <label style={{width: '100px'}}>Ghi chú</label>
+                            <TextArea
+                                style={{width: '70%'}}
+                                name='note'
+                                type="textarea"
+                                onChange={this.handleChange} />
+                        </Form.Field>
+
+
                     </Grid.Column>
                     <Grid.Column mobile={16} tablet={8} computer={8}>
                         <p style={{fontWeight: 'bold'}}>3. Cước phí</p>
-                        <Form.Field>
-                            Phí vận chuyển: {objData.shipFee}
-                        </Form.Field>
                         <Form.Field inline>
                             <label>Phí phụ</label>
                             <Input
+
                                 type="number"
                                 name="bonusFee"
                                 onChange={this.handleChange}
@@ -491,13 +549,50 @@ class OrderForm extends React.Component {
                                 label={{basic: true, content: 'đ'}}
                                 labelPosition='right'
                             />
-
                         </Form.Field>
-                        <p><i>Điều chỉnh theo đơn hàng thực tế</i></p>
+                        <p>Phí vận chuyển: {objData.shipFee}</p>
                         <Form.Field>
                             <label>Tổng phí: {Number(objData.shipFee) + Number(objData.bonusFee)}</label>
                         </Form.Field>
-                        <p style={{fontWeight: 'bold'}}>4. Hình thức thu tiền</p>
+                        <p style={{fontWeight: 'bold'}}>4. Thu tiền</p>
+                        <Form.Field inline>
+                            <label>Tiền hàng</label>
+                            <Input
+                                type="number"
+                                name='goods.value'
+                                onChange={this.handleChange}
+                                icon='money'
+                                iconPosition='left'
+                                label={{basic: true, content: 'đ'}}
+                                labelPosition='right'
+                            />
+                        </Form.Field>
+
+                        <Form.Group inline>
+                            <Form.Field>
+                                <label>Trả cước</label>
+                                <Radio
+                                    label='Người gửi'
+                                    name='whoPay'
+                                    value='sender'
+                                    checked={whoPay === 'sender'}
+                                    onChange={this.changeWhoPay}
+                                />
+                            </Form.Field>
+                            <Form.Field>
+                                <Radio
+                                    label='Người nhận'
+                                    name='whoPay'
+                                    value='reciever'
+                                    checked={whoPay === 'reciever'}
+                                    onChange={this.changeWhoPay}
+                                />
+                            </Form.Field>
+                        </Form.Group>
+
+                        <Form.Field>
+                            <label>Thu khách: 0</label>
+                        </Form.Field>
 
                         <Button
                             content='Tạo vận đơn'

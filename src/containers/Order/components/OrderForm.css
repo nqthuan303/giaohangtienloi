@@ -1,0 +1,9 @@
+.reciever-address {
+    display: inline-block;
+    position: relative;
+    width: 70%;
+}
+.reciever-address-autocomplete-container {
+    position: absolute;
+    z-index: 100;
+}
