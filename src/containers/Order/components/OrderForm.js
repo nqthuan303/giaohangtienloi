@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {reduxForm} from 'redux-form'
-import {Grid, Button, Select, Form, Dropdown, Input, Radio, TextArea} from 'semantic-ui-react'
+import {Grid, Button, Select, Form, Dropdown, Input, Radio, TextArea, Checkbox} from 'semantic-ui-react'
 import {get, post} from '../../../api/utils'
 import PlacesAutocomplete, {geocodeByAddress} from 'react-places-autocomplete'
 import {toast} from 'react-toastify'
@@ -29,6 +29,7 @@ class OrderForm extends React.Component {
             whoPay: '',
             loading: false,
             objData: {
+                type: '',
                 bonusFee: 0,
                 reciever: {
                     address: ''
@@ -312,6 +313,21 @@ class OrderForm extends React.Component {
         this.setState({whoPay: value});
     }
 
+    onChangeType = (e, { value }) => {
+        const {objData} = this.state;
+        let type = '';
+
+        if(objData.type === ''){
+            type = value;
+        }
+
+        this.setState({
+            objData: {
+                ...objData, type
+            }
+        })
+    }
+
     render() {
         const {
             objData, whoPay,
@@ -506,21 +522,21 @@ class OrderForm extends React.Component {
                         <Form.Group inline>
                             <label style={{width: '100px'}}></label>
                             <Form.Field>
-                                <Radio
+                                <Checkbox
                                     label='Đổi hàng'
-                                    name='whoPay'
-                                    value='sender'
-                                    checked={whoPay === 'sender'}
-                                    onChange={this.changeWhoPay}
+                                    name='type'
+                                    value='tradeGoods'
+                                    checked={objData.type === 'tradeGoods'}
+                                    onChange={this.onChangeType}
                                 />
                             </Form.Field>
                             <Form.Field>
-                                <Radio
+                                <Checkbox
                                     label='Chỉ lấy hàng'
-                                    name='whoPay'
-                                    value='reciever'
-                                    checked={whoPay === 'reciever'}
-                                    onChange={this.changeWhoPay}
+                                    name='type'
+                                    value='getGoods'
+                                    checked={objData.type === 'getGoods'}
+                                    onChange={this.onChangeType}
                                 />
                             </Form.Field>
                         </Form.Group>
