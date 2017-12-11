@@ -68,7 +68,7 @@ class EachDelivery extends Component {
           createdAt.getMonth() + ' ' +
           createdAt.getHours() + ':' +
           createdAt.getMinutes();
-          const phoneNumbers = order.reciever.phoneNumbers;
+          const phoneNumbers = order.receiver.phoneNumbers;
           let textPhoneNUmbers = ''
           for(let k=0; k<phoneNumbers.length; k++){
             textPhoneNUmbers =textPhoneNUmbers + '    ' + phoneNumbers[k]
@@ -78,9 +78,9 @@ class EachDelivery extends Component {
                 <Table.Cell>{count} </Table.Cell>
                 <Table.Cell>{order.id} </Table.Cell>
                 <Table.Cell >{orderCreatedAt}</Table.Cell>
-                <Table.Cell >{order.reciever.name}</Table.Cell>
-                <Table.Cell >{order.reciever.address}</Table.Cell>
-                <Table.Cell >{order.reciever.district.name}</Table.Cell>
+                <Table.Cell >{order.receiver.name}</Table.Cell>
+                <Table.Cell >{order.receiver.address}</Table.Cell>
+                <Table.Cell >{order.receiver.district.name}</Table.Cell>
                 <Table.Cell >{textPhoneNUmbers}</Table.Cell>
                 <Table.Cell >Tiền</Table.Cell>
                 <Table.Cell >

@@ -30,15 +30,15 @@ class OrderInfo extends React.Component {
     renderList(){
         const {orders} = this.state;
         return orders.map((item, i) => {
-            const {reciever, orderstatus} = item;
-            const {phoneNumbers} = reciever;
+            const {receiver, orderstatus} = item;
+            const {phoneNumbers} = receiver;
 
             return (
                 <Table.Row key={i}>
                     <Table.Cell>{item.id}</Table.Cell>
                     <Table.Cell>{item.createdAt}</Table.Cell>
-                    <Table.Cell>{reciever.name}</Table.Cell>
-                    <Table.Cell>{reciever.address}</Table.Cell>
+                    <Table.Cell>{receiver.name}</Table.Cell>
+                    <Table.Cell>{receiver.address}</Table.Cell>
                     <Table.Cell>{phoneNumbers[0]}</Table.Cell>
                     <Table.Cell></Table.Cell>
                     <Table.Cell>{orderstatus.name}</Table.Cell>

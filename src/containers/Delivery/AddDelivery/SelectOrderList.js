@@ -30,9 +30,9 @@ export default class SelectOrderList extends Component {
           <Table.Cell>{count} </Table.Cell>
           <Table.Cell>{order.id} </Table.Cell>
           <Table.Cell >{orderCreatedAt}</Table.Cell>
-          <Table.Cell >{order.reciever.name}</Table.Cell>
-          <Table.Cell >{order.reciever.address}</Table.Cell>
-          <Table.Cell >{order.reciever.district.name}</Table.Cell>
+          <Table.Cell >{order.receiver.name}</Table.Cell>
+          <Table.Cell >{order.receiver.address}</Table.Cell>
+          <Table.Cell >{order.receiver.district.name}</Table.Cell>
           <Table.Cell >
             <Icon style={{cursor: 'pointer'}}
                   name='delete' 

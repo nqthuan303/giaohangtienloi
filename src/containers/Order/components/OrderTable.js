@@ -101,9 +101,9 @@ export default class OrderTableComponent extends Component {
                 <Table.Row key={i}>
                     <Table.Cell>{item.id}</Table.Cell>
                     <Table.Cell>September 14, 2013</Table.Cell>
-                    <Table.Cell>{item.client.name}</Table.Cell>
+                    <Table.Cell>{item.client ? item.client.name: ''}</Table.Cell>
                     <Table.Cell>{item.address}</Table.Cell>
-                    <Table.Cell>{item.reciever_phone}</Table.Cell>
+                    <Table.Cell>{item.receiver_phone}</Table.Cell>
                     <Table.Cell>No</Table.Cell>
                     <Table.Cell>{item.orderstatus.name}</Table.Cell>
                     <Table.Cell>
