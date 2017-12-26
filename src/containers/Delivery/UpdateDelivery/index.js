@@ -1,46 +1,29 @@
 import React, {Component} from 'react'
-import { Input, Button, Segment,Select, Modal } from 'semantic-ui-react'
+import { Button, Segment } from 'semantic-ui-react'
 import StorageOrderCard from '../Components/StorageOrderCard'
 import SelectOrderList from '../Components/SelectOrderList'
-import EachDeliveryTable from './EachDeliveryTable'
 import { get } from '../../../api/utils'
-import './styles.css'
-class AddDelivery extends Component {
+import './styles.scss'
+
+class UpdateDelivery extends Component {
   constructor (props) {
     super(props)
     this.state = {
       districts: [],
-      shippers: [],
-      selectedShipper: '',
       selectList: [],
       orderInDistrict: [],
       arrActiveButton: {},
-      showModal: false,
-      confirmSave: false,
       
     }
   }
 
   componentDidMount () {
     this.getDistrictList();
-    this.getShipperList();
-  }
-  getShipperList () {
-    get('/user/getShipper').then((result) => {
-      if(result && result.data && result.data.length>0){
-        let data = result.data
-        data.unshift({key: -1, value: -1, text: 'Chọn shipper'})
-        this.setState({
-          shippers: result.data
-        })
-      }
-    })
   }
   getDistrictList () {
     get('/order/count-order-each-district-and-status?status=storage').then((result) => {
-      if(result && result.data && result.data.data){
-        let districts= result.data.data
-        console.log(districts)
+      let districts= result.data.data
+      if(districts){
         let arrActiveButton = {all: false}
         for(let i =0; i<districts.length; i++){
           let id=districts[i]._id
@@ -132,11 +115,7 @@ class AddDelivery extends Component {
       arrActiveButton: arrActiveButton
     })
   }
-  onSelectShipper = (value) => {
-    this.setState({
-      selectedShipper: value
-    })
-  }
+
   onClickCard(order){
     const { selectList }  = this.state;
     let orderInDistrict = this.state.orderInDistrict;
@@ -172,43 +151,18 @@ class AddDelivery extends Component {
       orderInDistrict: orderInDistrict
     })
   }
-  closeShowModal =()=>{
-    this.setState({
-      showModal: false,
-      confirmSave: false,
-    })
-  }
-  openShowModal =()=>{
-    const {selectedShipper, selectList} = this.state
-    
-    if(selectedShipper != "" && selectedShipper != -1 && selectList.length>0){
-      this.setState({
-        showModal: true
-      })
-    }
-    
-  }
-  onConfirmDelivery=()=>{
-    this.setState({
-      confirmSave: true,
-    })
-  }
+
   onSaveData =()=>{
     this.setState({selectList: []})
     this.getDistrictList();
   }
   render () {
-    const {shippers, selectedShipper,selectList,orderInDistrict,showModal,confirmSave} =this.state
+    console.log(21121221)
+    const {selectList,orderInDistrict} =this.state
     return (
       <div>
         <div>
-        <Select
-          value={selectedShipper? selectedShipper: -1}
-          onChange={(e, {name, value}) => this.onSelectShipper(value)}
-          options={shippers} />
-
-          <Button style={{float: 'right'}} primary onClick={this.openShowModal}>Tạo</Button>
-          <Input style={{float: 'right', marginRight: '5px'}} icon='search' placeholder='Mã vận đơn...' />
+          <Button style={{float: 'right'}} primary >Cập Nhật</Button>
         </div>
 
         <div className='render-button-districts'>
@@ -224,31 +178,8 @@ class AddDelivery extends Component {
               data={selectList} 
               onClickDeleteOrder={(order)=>this.onClickDeleteSelectList(order)}/>
         </Segment>
-        <Modal
-          size={'large'}
-          open={showModal}
-          onClose={this.closeShowModal}>
-          <Modal.Header>Chuyến Đi Giao</Modal.Header>
-          <Modal.Content>
-            <EachDeliveryTable
-              selectList={selectList}
-              selectedShipper={selectedShipper.toString()}
-              confirmSave={confirmSave}
-              closeShowModal={this.closeShowModal}
-              onSaveData={this.onSaveData}
-              />
-          </Modal.Content>
-          <Modal.Actions>
-              <Button onClick={this.closeShowModal} color='red'>
-                  Hủy
-              </Button>
-              <Button onClick={this.onConfirmDelivery} color='green'>
-                  Xác nhận
-              </Button>
-          </Modal.Actions>
-        </Modal>
       </div>
     )
   }
 }
-export default AddDelivery
+export default UpdateDelivery

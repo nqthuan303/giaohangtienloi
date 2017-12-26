@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {Table, Button, Select} from 'semantic-ui-react'
-import { get,post } from '../../../api/utils'
-import { toast } from 'react-toastify'
+import { get } from '../../../api/utils'
+// import { toast } from 'react-toastify'
 import './styles.scss'
 
 class EachDelivery extends Component {
@@ -16,6 +16,7 @@ class EachDelivery extends Component {
     static propTypes = {
         delivery: PropTypes.object.isRequired,
         closeShowModal: PropTypes.func,
+        onClickDeleteOrder: PropTypes.func
     }
     componentDidMount(){
         this.getOrderStatus();
@@ -54,24 +55,22 @@ class EachDelivery extends Component {
         }
         
     }
-    onSelectOrderStatus(orderId, value){
-        console.log(value)
-    }
     renderBody=()=>{
         const {orderStatus} = this.state;
+        const {delivery} = this.props;
         let result=[];
         let count =1;
-        for(let i=0; i<this.props.delivery.orders.length; i++){
-          const order = this.props.delivery.orders[i];
+        for(let i=0; i<delivery.orders.length; i++){
+          const order = delivery.orders[i];
           const createdAt = new Date(order.createdAt);
           const orderCreatedAt = createdAt.getDate() + '/' +
           createdAt.getMonth() + ' ' +
           createdAt.getHours() + ':' +
           createdAt.getMinutes();
           const phoneNumbers = order.reciever.phoneNumbers;
-          let textPhoneNUmbers = ''
+          let textPhoneNumbers = ''
           for(let k=0; k<phoneNumbers.length; k++){
-            textPhoneNUmbers =textPhoneNUmbers + '    ' + phoneNumbers[k]
+            textPhoneNumbers =textPhoneNumbers + '    ' + phoneNumbers[k]
           }
           result.push(
             <Table.Row key={order._id}>
@@ -81,7 +80,7 @@ class EachDelivery extends Component {
                 <Table.Cell >{order.reciever.name}</Table.Cell>
                 <Table.Cell >{order.reciever.address}</Table.Cell>
                 <Table.Cell >{order.reciever.district.name}</Table.Cell>
-                <Table.Cell >{textPhoneNUmbers}</Table.Cell>
+                <Table.Cell >{textPhoneNumbers}</Table.Cell>
                 <Table.Cell >Tiền</Table.Cell>
                 <Table.Cell >
                     <Select

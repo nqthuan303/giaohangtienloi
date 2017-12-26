@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Table, Icon, Modal,Button } from 'semantic-ui-react';
 import EachDelivery from './EachDelivery';
+import {Goto} from '../../../components'
 import { get } from '../../../api/utils';
 import './styles.scss'
 class DeliveryUnComplete extends Component {
@@ -17,7 +18,7 @@ class DeliveryUnComplete extends Component {
   }
   async getDelivery(){
     const data = await get('/delivery/list');
-    if(data.data){
+    if(data && data.data){
       const deliverys = data.data;
       let listDelivery =[];
       for(let i =0; i<deliverys.length; i++){
@@ -39,7 +40,6 @@ class DeliveryUnComplete extends Component {
       showModal: true,
     })
   }
-  
   renderBody(){
     const {listDelivery} = this.state;
     return listDelivery.map((item, i) => {
@@ -48,6 +48,7 @@ class DeliveryUnComplete extends Component {
       createdAt.getMonth() + ' ' +
       createdAt.getHours() + ':' +
       createdAt.getMinutes();
+      const deliveryUrl = '/delivery/update/' + item._id;
         return (
             <Table.Row key={i}>
                 <Table.Cell>{item.id}</Table.Cell>
@@ -55,7 +56,7 @@ class DeliveryUnComplete extends Component {
                 <Table.Cell>{item.user.name}</Table.Cell>
                 <Table.Cell>{item.orders.length}</Table.Cell>
                 <Table.Cell>1212122</Table.Cell>
-                <Table.Cell><Icon name='plus' size='large' link/></Table.Cell>
+                <Table.Cell><Goto text={<Icon size="large" name='edit' />} url={deliveryUrl}/> </Table.Cell>
                 <Table.Cell><a style={{cursor: "pointer"}} onClick={()=>this.onClickEditDelivery(item)}>Chưa Kết Thúc</a></Table.Cell>
                 <Table.Cell><Icon name='print' size='large' link/></Table.Cell>
             </Table.Row>
@@ -74,7 +75,7 @@ class DeliveryUnComplete extends Component {
                     <Table.HeaderCell>Nhân Viên Giao</Table.HeaderCell>
                     <Table.HeaderCell>Số Đơn</Table.HeaderCell>
                     <Table.HeaderCell>Tổng Thu</Table.HeaderCell>
-                    <Table.HeaderCell>Thêm Đơn</Table.HeaderCell>
+                    <Table.HeaderCell>Chỉnh Sửa</Table.HeaderCell>
                     <Table.HeaderCell>Trạng Thái</Table.HeaderCell>
                     <Table.HeaderCell></Table.HeaderCell>
                 </Table.Row>
@@ -93,6 +94,7 @@ class DeliveryUnComplete extends Component {
             <EachDelivery
               delivery={delivery}
               closeShowModal={this.closeShowModal}
+              onClickDeleteOrder={(deliveryId, orderId)=>this.onClickDeleteOrder(deliveryId, orderId)}
               />
           </Modal.Content>
         </Modal>

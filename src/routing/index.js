@@ -12,7 +12,8 @@ import {
     PickupHistory,
     DeliveryList,
     ShopInfo,
-    AddDelivery
+    AddDelivery,
+    UpdateDelivery
 } from '../containers';
 
 import {RouteAuth} from '../components'
@@ -113,6 +114,14 @@ export const appRouting = [
         sidebarVisible: false,
         tag: RouteAuth,
         component: AddDelivery
+    },
+    {
+        path: '/delivery/update/:deliveryId',
+        name: 'Cập nhật chuyến đi giao',
+        exact: true,
+        sidebarVisible: false,
+        tag: RouteAuth,
+        component: UpdateDelivery
     },
     {
         path: '/auth',
