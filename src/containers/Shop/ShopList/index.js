@@ -27,8 +27,8 @@ class ClientList extends Component {
         const result = await get('/client/list');
 
         if (result.ok) {
-            const data = result.data
-            this.setState({shopList: data.data.items});
+            const data = result.data;
+            this.setState({shopList: data.data});
         }
     }
 

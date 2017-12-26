@@ -31,7 +31,7 @@ class OrderForm extends React.Component {
             objData: {
                 type: '',
                 bonusFee: 0,
-                reciever: {
+                receiver: {
                     address: ''
                 },
                 sender: {
@@ -68,9 +68,9 @@ class OrderForm extends React.Component {
         const {objData, priceList} = this.state;
         const {objData: prevObjData, priceList: prevPriceList} = prevState;
 
-        if(priceList.length > 0 && objData.reciever.district){
+        if(priceList.length > 0 && objData.receiver.district){
             if(
-                (objData.reciever.district !== prevObjData.reciever.district)||
+                (objData.receiver.district !== prevObjData.receiver.district)||
                 (JSON.stringify(priceList) !== JSON.stringify(prevPriceList))
             ){
                 this.getShipFee();
@@ -80,8 +80,8 @@ class OrderForm extends React.Component {
 
     getShipFee(){
         const {objData, priceList} = this.state;
-        const {reciever} = objData;
-        const {district} = reciever;
+        const {receiver} = objData;
+        const {district} = receiver;
         let shipFee = 0;
         for(let i=0; i< priceList.length; i++){
             const objPrice = priceList[i];
@@ -143,20 +143,20 @@ class OrderForm extends React.Component {
         }
     }
 
-    onChangeRecieverAddress = (address) => {
+    onChangeReceiverAddress = (address) => {
         const {objData} = this.state
 
         this.setState({
             objData: {
                 ...objData,
-                reciever: {
-                    ...objData.reciever, address: address
+                receiver: {
+                    ...objData.receiver, address: address
                 }
             }
         })
     }
 
-    onSelectRecieverAddress = (address) => {
+    onSelectReceiverAddress = (address) => {
         const {objData} = this.state
 
         geocodeByAddress(address, (err, {lat, lng}) => {
@@ -166,8 +166,8 @@ class OrderForm extends React.Component {
             this.setState({
                 objData: {
                     ...objData,
-                    reciever: {
-                        ...objData.reciever,
+                    receiver: {
+                        ...objData.receiver,
                         address: address,
                         lat: lat,
                         lng: lng
@@ -200,12 +200,12 @@ class OrderForm extends React.Component {
 
     onRemovePhoneNumber = () => {
         const {objData} = this.state
-        const phoneNumbers = objData.reciever.phoneNumbers
+        const phoneNumbers = objData.receiver.phoneNumbers
         if (phoneNumbers) {
             phoneNumbers.splice(1, 1)
 
             this.setState({
-                objData: {...objData, reciever: {...objData.reciever, phoneNumbers: phoneNumbers}}
+                objData: {...objData, receiver: {...objData.receiver, phoneNumbers: phoneNumbers}}
             })
         }
 
@@ -219,7 +219,7 @@ class OrderForm extends React.Component {
     onChangePhoneNumber(e, index) {
         const value = e.target.value
         const {objData} = this.state
-        const phoneNumbers = objData.reciever.phoneNumbers || []
+        const phoneNumbers = objData.receiver.phoneNumbers || []
 
         if (phoneNumbers[index]) {
             phoneNumbers[index] = value
@@ -228,7 +228,7 @@ class OrderForm extends React.Component {
         }
 
         this.setState({
-            objData: {...objData, reciever: {...objData.reciever, phoneNumbers: phoneNumbers}}
+            objData: {...objData, receiver: {...objData.receiver, phoneNumbers: phoneNumbers}}
         })
     }
 
@@ -344,9 +344,9 @@ class OrderForm extends React.Component {
             placeholder: 'Địa chỉ người gửi'
         }
 
-        const recieverInputProps = {
-            value: objData.reciever.address,
-            onChange: this.onChangeRecieverAddress,
+        const receiverInputProps = {
+            value: objData.receiver.address,
+            onChange: this.onChangeReceiverAddress,
             type: 'text',
             placeholder: 'Địa chỉ'
         }
@@ -416,7 +416,7 @@ class OrderForm extends React.Component {
                                 style={{width: '70%'}}
                                 action={{icon: 'add', type: 'button', onClick: this.onAddPhoneNumber}}
                                 onChange={(e) => this.onChangePhoneNumber(e, 0)}
-                                name="reciever.phoneNumbers"
+                                name="receiver.phoneNumbers"
                                 placeholder='Số điện thoại'/>
                         </Form.Field>
 
@@ -427,7 +427,7 @@ class OrderForm extends React.Component {
                                     style={{width: '70%'}}
                                     action={{icon: 'minus', type: 'button', onClick: this.onRemovePhoneNumber}}
                                     onChange={(e) => this.onChangePhoneNumber(e, 1)}
-                                    name="reciever.phoneNumbers"
+                                    name="receiver.phoneNumbers"
                                     placeholder='Số điện thoại 1'/>
                             </Form.Field> : ''}
 
@@ -435,7 +435,7 @@ class OrderForm extends React.Component {
                             <label style={{width: '100px'}}>Họ tên (*)</label>
                             <Input
                                 style={{width: '70%'}}
-                                name="reciever.name"
+                                name="receiver.name"
                                 placeholder='Họ tên'
                                 onChange={this.handleChange}/>
                         </Form.Field>
@@ -443,21 +443,21 @@ class OrderForm extends React.Component {
                         <Form.Field inline>
                             <label style={{width: '100px'}}>Địa chỉ (*)</label>
                             <PlacesAutocomplete
-                                value={objData.reciever.address}
+                                value={objData.receiver.address}
                                 classNames={{
-                                    root: 'reciever-address',
+                                    root: 'receiver-address',
                                     autocompleteContainer: 'my-autocomplete-container'
                                 }}
                                 options={placesAutocompleteOptions}
-                                inputProps={recieverInputProps}
-                                onSelect={this.onSelectRecieverAddress}/>
+                                inputProps={receiverInputProps}
+                                onSelect={this.onSelectReceiverAddress}/>
                         </Form.Field>
 
                         <Form.Group>
                             <label style={{width: '110px'}}></label>
                             <Form.Field width={5}>
                                 <Dropdown
-                                    name="reciever.district"
+                                    name="receiver.district"
                                     onChange={this.onChangeDistrict}
                                     placeholder='Quận/Huyện'
                                     fluid search selection
@@ -465,7 +465,7 @@ class OrderForm extends React.Component {
                             </Form.Field>
                             <Form.Field width={6}>
                                 <Dropdown
-                                    name="reciever.ward"
+                                    name="receiver.ward"
                                     onChange={this.handleChange}
                                     placeholder='Phường/Xã'
                                     fluid search selection
@@ -599,8 +599,8 @@ class OrderForm extends React.Component {
                                 <Radio
                                     label='Người nhận'
                                     name='whoPay'
-                                    value='reciever'
-                                    checked={whoPay === 'reciever'}
+                                    value='receiver'
+                                    checked={whoPay === 'receiver'}
                                     onChange={this.changeWhoPay}
                                 />
                             </Form.Field>

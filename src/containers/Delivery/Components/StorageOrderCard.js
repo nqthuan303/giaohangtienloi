@@ -34,7 +34,7 @@ export default class StorageOrderCard extends Component {
           key={i}
           header={orderCreatedAt}
           meta={order.id}
-          description={order.reciever.address}
+          description={order.receiver.address}
           onClick={()=>this.onClickCard(order)}
         />
       )

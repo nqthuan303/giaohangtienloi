@@ -156,7 +156,7 @@ class AddDelivery extends Component {
     const { orderInDistrict ,arrActiveButton}  = this.state;
     if(arrActiveButton.all){
       orderInDistrict.push(order)
-    }else if(arrActiveButton[order.reciever.district._id]){
+    }else if(arrActiveButton[order.receiver.district._id]){
       orderInDistrict.push(order)
     }
 
